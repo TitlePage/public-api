@@ -22,12 +22,12 @@ tags:
 schemes:
   - https
 paths:
-  /ONIX-3.0/{ISBN}:
+  /availablity/{ISBN}:
     get:
       tags:
         - Titles
-      summary: Find title by ISBN
-      description: Returns a single ONIX file
+      summary: Find the availablity of an ISBN
+      description: Returns nearest bookstore with availible stock
       operationId: findISBN
       produces:
         - application/json
