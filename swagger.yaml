@@ -47,6 +47,31 @@ paths:
           description: Invalid ISBN supplied
         '404':
           description: ISBN not found
+  /full-onix/{ISBN}:
+    get:
+      tags:
+        - Titles
+      summary: Find the availablity of an ISBN
+      description: Returns nearest bookstore with availible stock
+      operationId: fullOnix
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN
+          in: path
+          description: ISBN of the title to return
+          required: true
+          type: string
+          format: int64
+      responses:
+        '302':
+          description: Redirect to the full ONIX 3.0 file on S3'
+        '400':
+          description: Invalid ISBN supplied
+        '404':
+          description: ISBN not found
+      security:
+        - api_key: []
   /stock/{ISBN}:
     post:
       tags:
