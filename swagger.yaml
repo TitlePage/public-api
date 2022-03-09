@@ -12,32 +12,50 @@ info:
 host: api.titlepage.com.au
 basePath: /v1
 tags:
-  - name: Titles
-    description: Full ONIX 3.0
+  - name: Public API
+    description: Publically callable ( no autentication ) APIs
     externalDocs:
       description: Find out more
       url: https://titlepage.com.au
-  - name: Stock
-    description: Bookstore stock levels
+  - name: Bookseller API
+    description: Authorized bookseller APIs
 schemes:
   - https
 paths:
-  /availablity/{ISBN}:
+  /availablity/{ISBN-13}:
     get:
       tags:
-        - Titles
+        - Public API
       summary: Find the availablity of an ISBN
-      description: Returns nearest bookstore with availible stock
+      description: Returns nearest bookstore with availible stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used. 
       operationId: findISBN
       produces:
         - application/json
       parameters:
-        - name: ISBN
+        - name: ISBN-13
           in: path
-          description: ISBN of the title to return
+          description: ISBN-13 of the title check the avalibilty
           required: true
-          type: string
+          type: integer
           format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+        - name: latitude
+          in: query
+          type: number
+          minimum: -90
+          maximum: 90
+        - name: longitude
+          in: query
+          type: number
+          minimum: -90
+          maximum: 90
+        - name: radius
+          in: query
+          type: integer
+          minimum: 1
+          default: 10
+          maximum: 100
       responses:
         '200':
           description: successful operation
@@ -47,22 +65,71 @@ paths:
           description: Invalid ISBN supplied
         '404':
           description: ISBN not found
-  /full-onix/{ISBN}:
+  /onix/{ISBN-13}:
     get:
       tags:
-        - Titles
-      summary: Find the availablity of an ISBN
-      description: Returns nearest bookstore with availible stock
+        - Public API
+      summary: Redirects to a REDUCTED ONIX 3.0 file for the ISBN
+      description: Redirects (status 302) to the REDUCTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      operationId: publicOnix
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to return
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+      responses:
+        '302':
+          description: Redirect to the full ONIX 3.0 file on S3'
+        '400':
+          description: Invalid ISBN supplied
+        '404':
+          description: ISBN not found
+  /pre-built/{NAME}:
+    get:
+      tags:
+        - Public API
+      summary: Returns a list of ISBN-13 based on the "pre-built" creteria.
+      description: The list of ISBN-13 return can then be in turn used to call /onix or /onix-full 
+      operationId: publicPreBuilt
+      produces:
+        - application/json
+      parameters:
+        - name: NAME
+          in: path
+          description: The name of the pre-built list
+          required: true
+          type: string
+      responses:
+        '200':
+          description: A list of ISBN-13
+        '400':
+          description: Invalid ISBN supplied
+        '404':
+          description: ISBN not found          
+  /full-onix/{ISBN-13}:
+    get:
+      tags:
+        - Bookseller API
+      summary: Returns to FULL ONIX 3.0 file for the ISBN
+      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client side.  
       operationId: fullOnix
       produces:
         - application/json
       parameters:
-        - name: ISBN
+        - name: ISBN-13
           in: path
-          description: ISBN of the title to return
+          description: ISBN-13 of the title to return
           required: true
-          type: string
+          type: integer
           format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
       responses:
         '302':
           description: Redirect to the full ONIX 3.0 file on S3'
@@ -72,21 +139,46 @@ paths:
           description: ISBN not found
       security:
         - api_key: []
-  /stock/{ISBN}:
-    post:
+  /search:
+    get:
       tags:
-        - Stock
-      summary: Place an order for a pet
+        - Bookseller API
+      summary: Search for a matching set of titles.
+      description: The matching ISBN-13 list. Maximum of 1000 matching ISBN-13
+      operationId: searchOnix
+      produces:
+        - application/json
+      parameters:
+        - name: title
+          in: query
+          description: The title to search
+          type: string
+          format: int64
+      responses:
+        '200':
+          description: List of matching ISBN-13
+        '400':
+          description: No valid query parameters
+      security:
+        - api_key: []      
+  /stock/{ISBN-13}:
+    put:
+      tags:
+        - Bookseller API
+      summary: Update a title stock levels
       description: ''
-      operationId: placeOrder
+      operationId: updateStock
       produces:
         - application/json
       parameters:
         - in: path
-          name: ISBN
+          name: ISBN-13
           description: The number of books in stock
           required: true
-          type: string
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
         - in: body
           name: in-stock
           description: The number of books in stock
