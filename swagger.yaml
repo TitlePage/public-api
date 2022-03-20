@@ -194,7 +194,7 @@ paths:
     post:
       tags:
         - Public API
-      summary: Update a title stock levels
+      summary: Request a public token
       description: ''
       operationId: requestToken
       produces:
@@ -202,7 +202,7 @@ paths:
       parameters:
         - in: body
           name: tokenRequest
-          description: The number of books in stock
+          description: Request a public token
           required: true
           schema:
             $ref: '#/definitions/TokenRequest'
@@ -211,7 +211,27 @@ paths:
           description: successful operation
         '400':
           description: Invalid Request
-        
+  /bookseller-token/:
+    post:
+      tags:
+        - Bookseller API
+      summary: Request a book seller token.
+      description: ''
+      operationId: requestBooksellerToken
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: tokenBooksellerRequest
+          description: Request a booker seller token
+          required: true
+          schema:
+            $ref: '#/definitions/TokenBooksellerRequest'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Request        
   /stock/{ISBN-13}:
     put:
       tags:
@@ -265,12 +285,16 @@ definitions:
     properties:
       firstName:
         type: string
+        example: Joe
       lastName:
         type: string
+        example: Public
       email:
-        type: string        
+        type: string
+        example: joe@example.com
       website:
         type: string
+        example: https://example.com
       typeBlog:
         type: boolean
       typeRetail:
@@ -290,7 +314,35 @@ definitions:
 
       requireShopify:
         type: boolean
-
+  TokenBooksellerRequest:
+    type: object
+    properties:
+      firstName:
+        type: string
+        example: Jane
+      lastName:
+        type: string
+        example: Doe
+      email:
+        type: string
+        example: jane@books.example.com
+      website:
+        type: string
+        example: https://books.example.com
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+      latitude:
+        type: number
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        minimum: -90
+        maximum: 90        
+        
   Location:
     type: array
     items:
