@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: 'The Australian Publishers Association API'
+  description: The Australian Publishers Association API
   version: 1.0.0
   title: APA API
   termsOfService: https://www.publishers.asn.au/Web/Terms-and-Conditions.aspx
@@ -20,7 +20,7 @@ tags:
   - name: Bookseller API
     description: Authorized bookseller APIs
   - name: Not Recommended
-    description: Not recommended APIs    
+    description: Not recommended APIs
 schemes:
   - https
 paths:
@@ -29,7 +29,7 @@ paths:
       tags:
         - Public API
       summary: Find the availability of an ISBN
-      description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used. 
+      description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used.
       operationId: findISBN
       produces:
         - application/json
@@ -117,13 +117,13 @@ paths:
         '400':
           description: Invalid ISBN supplied
         '404':
-          description: ISBN not found          
+          description: ISBN not found
   /pre-built/{NAME}:
     get:
       tags:
         - Public API
       summary: Returns a list of ISBN-13 based on the "pre-built" criteria.
-      description: The list of ISBN-13 returns can then be in turn used to call /onix or /onix-full 
+      description: The list of ISBN-13 returns can then be in turn used to call /onix or /onix-full
       operationId: publicPreBuilt
       produces:
         - application/json
@@ -139,13 +139,13 @@ paths:
         '400':
           description: Invalid ISBN supplied
         '404':
-          description: ISBN not found          
+          description: ISBN not found
   /onix-full/{ISBN-13}:
     get:
       tags:
         - Bookseller API
       summary: Returns to FULL ONIX 3.0 file for the ISBN
-      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.  
+      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
       operationId: fullOnix
       produces:
         - application/json
@@ -171,8 +171,8 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Search for a matching set of titles.
-      description: The matching ISBN-13 list. Maximum of 1000 matching ISBN-13
+      summary: Search for a matching set to titles.
+      description: Allow search by title or a list of ISBN-13. The matching ISBN-13 list. Maximum of 1000 matching ISBN-13   @TODO  How do we handle missing ISBN-13? @TODO What is the correct @TODO how to put in line breaks in swagger descriptions.
       operationId: searchOnix
       produces:
         - application/json
@@ -181,15 +181,20 @@ paths:
           in: query
           description: The title to search
           type: string
+        - name: ISBN-13
+          in: query
+          description: A list (comma seperated) of ISBN-13
+          type: string
           format: int64
       responses:
         '200':
           description: List of matching ISBN-13
+          schema:
+            $ref: '#/definitions/SearchResult'
         '400':
           description: No valid query parameters
       security:
-        - api_key: []   
-
+        - api_key: []
   /request-token/:
     post:
       tags:
@@ -231,7 +236,7 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Invalid Request        
+          description: Invalid Request
   /stock/{ISBN-13}:
     put:
       tags:
@@ -301,7 +306,7 @@ definitions:
         type: boolean
       typePublisherDistributor:
         type: boolean
-      typeOther: 
+      typeOther:
         type: boolean
       requireOnixSimple:
         type: boolean
@@ -311,7 +316,6 @@ definitions:
         type: boolean
       requireWordPress:
         type: boolean
-
       requireShopify:
         type: boolean
   TokenBooksellerRequest:
@@ -341,17 +345,32 @@ definitions:
       longitude:
         type: number
         minimum: -90
-        maximum: 90 
+        maximum: 90
   Location:
     type: array
     items:
       type: object
       properties:
-        bookstore: 
+        bookstore:
           type: string
           example: Books Are Us
-        address: 
+        address:
           type: string
           example: 1 Main Street, Sydney, NSW
         availability:
           type: boolean
+  SearchResult:
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
+          type: integer
+          format: int64
+          example: 9780000000001
+        title:
+          type: string
+          example: Happy Holidays.
+        onix-url:
+          type: string
+          example: https://public.onix.s3.aws.com/001/9780000000001.xml.gz
