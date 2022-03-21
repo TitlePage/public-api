@@ -349,7 +349,9 @@ definitions:
       properties:
         bookstore: 
           type: string
+          example: Books Are Us
         address: 
           type: string
+          example: 1 Main Street, Sydney, NSW
         availability:
           type: boolean
