@@ -113,7 +113,7 @@ paths:
           maximum: 9790000000000
       responses:
         '302':
-          description: Redirect to the full ONIX 3.0 file on S3'
+          description: Redirect to the simplified ONIX 3.0 file on S3
         '400':
           description: Invalid ISBN supplied
         '404':
