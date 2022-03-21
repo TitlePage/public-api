@@ -373,4 +373,5 @@ definitions:
           example: Happy Holidays.
         onix-url:
           type: string
+          description: Broken into sub directories by modulas of the ISBN-13 number.
           example: https://public.onix.s3.aws.com/001/9780000000001.xml.gz
