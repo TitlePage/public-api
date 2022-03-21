@@ -20,7 +20,7 @@ tags:
   - name: Bookseller API
     description: Authorized bookseller APIs
   - name: Not Recommended
-    description: Not recommeded APIs    
+    description: Not recommended APIs    
 schemes:
   - https
 paths:
@@ -28,8 +28,8 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find the availablity of an ISBN
-      description: Returns nearest bookstore with availible stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used. 
+      summary: Find the availability of an ISBN
+      description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used. 
       operationId: findISBN
       produces:
         - application/json
@@ -71,8 +71,8 @@ paths:
     get:
       tags:
         - Public API
-      summary: Redirects to a REDUCTED ONIX 3.0 file for the ISBN
-      description: Redirects (status 302) to the REDUCTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN
+      description: Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
       operationId: publicOnix
       produces:
         - application/json
@@ -98,7 +98,7 @@ paths:
         - Public API
         - Not Recommended
       summary: Redirects to a Simplified ONIX 3.0 file for the ISBN
-      description: Redirects (status 302) to the Simplified ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      description: Redirects (status 302) to the Simplified ONIX 3.0 file stored on S3. The file name is just a function of the ISBN-13 number so must be re-fetched to validate that the client has the latest copy.
       operationId: simplifiedOnix
       produces:
         - application/json
@@ -122,8 +122,8 @@ paths:
     get:
       tags:
         - Public API
-      summary: Returns a list of ISBN-13 based on the "pre-built" creteria.
-      description: The list of ISBN-13 return can then be in turn used to call /onix or /onix-full 
+      summary: Returns a list of ISBN-13 based on the "pre-built" criteria.
+      description: The list of ISBN-13 returns can then be in turn used to call /onix or /onix-full 
       operationId: publicPreBuilt
       produces:
         - application/json
@@ -145,7 +145,7 @@ paths:
       tags:
         - Bookseller API
       summary: Returns to FULL ONIX 3.0 file for the ISBN
-      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client side.  
+      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.  
       operationId: fullOnix
       produces:
         - application/json
@@ -341,8 +341,7 @@ definitions:
       longitude:
         type: number
         minimum: -90
-        maximum: 90        
-        
+        maximum: 90 
   Location:
     type: array
     items:
@@ -352,5 +351,5 @@ definitions:
           type: string
         address: 
           type: string
-        availiblity:
+        availability:
           type: boolean
