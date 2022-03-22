@@ -88,6 +88,7 @@ paths:
       responses:
         '302':
           description: Redirect to the REDACTED ONIX 3.0 file on S3'
+          example: "https://public.onix.s3.aws.com/001/9780000000001.xml.gz"
         '400':
           description: Invalid ISBN-13 supplied
         '404':
