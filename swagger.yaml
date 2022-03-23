@@ -67,6 +67,8 @@ paths:
           description: Invalid ISBN-13 supplied
         '404':
           description: ISBN-13 not found
+      security:
+        - api_key: []
   /availablity/{ISBN-13}:
     get:
       tags:
@@ -182,6 +184,8 @@ paths:
           description: Invalid ISBN-13 supplied
         '404':
           description: ISBN-13 not found
+      security:
+        - api_key: []
   /onix-full/{ISBN-13}:
     get:
       tags:
@@ -279,6 +283,8 @@ paths:
           description: successful operation
         '400':
           description: Invalid Request
+      security:
+        - api_key: []
   /stock/{ISBN-13}:
     put:
       tags:
