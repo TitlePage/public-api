@@ -358,6 +358,10 @@ definitions:
         type: integer
         format: int64
         minimum: 0
+      returned:
+        type: integer
+        format: int64
+        minimum: 0        
       in-stock:
         type: integer
         format: int64
