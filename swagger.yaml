@@ -217,8 +217,8 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Search for a matching set to titles.
-      description: Allow search by title or a list of ISBN-13. The matching ISBN-13 list. Maximum of 1000 matching ISBN-13   @TODO  How do we handle missing ISBN-13? @TODO What is the correct @TODO how to put in line breaks in swagger descriptions.
+      summary: Search by Title or ISBN-13 will return a list of matching full ONIX 3.0 URLs.
+      description: Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13   @TODO  How do we handle missing ISBN-13? @TODO What is the correct @TODO how to put in line breaks in swagger descriptions.
       operationId: searchOnix
       produces:
         - application/json
