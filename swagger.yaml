@@ -19,7 +19,7 @@ tags:
       url: https://titlepage.com.au
   - name: Bookseller API
     description: Authorized bookseller APIs
-  - name: Publisher API
+  - name: Non-Bookseller API
     description: Authorized publisher APIs    
 schemes:
   - https
@@ -27,7 +27,7 @@ paths:
   /publisher/stock/{ISBN-13}:
     put:
       tags:
-        - Publisher API
+        - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher
       description: This will perform a "Block 6" update.
       operationId: publsiherStock
@@ -163,7 +163,7 @@ paths:
   /pre-built/{NAME}:
     get:
       tags:
-        - Public API
+        - Bookseller API
       summary: Returns a list of ISBN-13 based on the "pre-built" criteria.
       description: The list of ISBN-13 returns can then be in turn used to call /onix or /onix-full
       operationId: publicPreBuilt
