@@ -138,7 +138,6 @@ paths:
   /onix-simplified/{ISBN-13}:
     get:
       tags:
-        - Public API
         - Not Recommended
       summary: Redirects to a Simplified ONIX 3.0 file for the ISBN-13
       description: Redirects (status 302) to the Simplified ONIX 3.0 file stored on S3. The file name is just a function of the ISBN-13 number so must be re-fetched to validate that the client has the latest copy.
