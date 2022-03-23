@@ -273,7 +273,7 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /sale-batch/:
+  /sale:
     post:
       tags:
         - Bookseller API
@@ -287,43 +287,12 @@ paths:
           name: Stock data
           required: true
           schema:
-            $ref: '#/definitions/SaleBatch'
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid Order
-      security:
-        - api_key: []
-  /sale/{ISBN-13}:
-    put:
-      tags:
-        - Bookseller API
-      summary: Update a title stock levels
-      description: ''
-      operationId: updateStock
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: ISBN-13
-          description: The number of books in stock
-          required: true
-          type: integer
-          format: int64
-          minimum: 9780000000000
-          maximum: 9790000000000
-        - in: body
-          name: Sale data
-          description: The number of books sold and currently in stock
-          required: true
-          schema:
             $ref: '#/definitions/Sale'
       responses:
         '200':
           description: successful operation
         '400':
-          description: Invalid Order
+          description: Invalid Sale
       security:
         - api_key: []
 securityDefinitions:
@@ -347,31 +316,6 @@ definitions:
       expectedDate:
         type: string
         format: date
-  Sale:
-    type: object
-    properties:
-      timestamp:
-        type: string
-        format: date-time
-        example: "2022-06-25T14:23:10Z"
-      sold:
-        type: integer
-        format: int64
-        minimum: 0
-      returned:
-        type: integer
-        format: int64
-        minimum: 0        
-      in-stock:
-        type: integer
-        format: int64
-        minimum: 0
-      back-order:
-        type: integer
-        format: int64
-        minimum: 0
-    xml:
-      name: Order
   TokenRequest:
     type: object
     properties:
@@ -446,8 +390,7 @@ definitions:
           example: 1 Main Street, Sydney, NSW
         availability:
           type: boolean
-  SaleBatch:
-    description: "TODO: Do we need price ?"
+  Sale:
     type: array
     items:
       type: object
