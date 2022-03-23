@@ -29,40 +29,28 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher
-      description: This will perform a "Block 6" update.
+      description: Publisher stock levels onhand / on order / CBO  / expected date
       operationId: publsiherStock
       produces:
         - application/json
       parameters:
         - name: ISBN-13
           in: path
-          description: ISBN-13 of the title check the avalibilty
+          description: ISBN-13 of the title
           required: true
           type: integer
           format: int64
           minimum: 9780000000000
           maximum: 9790000000000
-        - name: latitude
-          in: query
-          type: number
-          minimum: -90
-          maximum: 90
-        - name: longitude
-          in: query
-          type: number
-          minimum: -90
-          maximum: 90
-        - name: radius
-          in: query
-          type: integer
-          minimum: 1
-          default: 10
-          maximum: 100
+        - in: body
+          name: stock
+          description: The number of books in stock
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherStock'
       responses:
         '200':
           description: successful operation
-          schema:
-            $ref: '#/definitions/Location'
         '400':
           description: Invalid ISBN-13 supplied
         '404':
@@ -322,8 +310,21 @@ securityDefinitions:
     name: api_key
     in: header
 definitions:
-  Block6:
+  PublisherStock:
     type: object
+    properties:
+      onhand:
+        type: number
+        format: int64
+      onOrder:
+        type: number
+        format: int64
+      CBO:
+        type: number
+        format: int64
+      expectedDate:
+        type: string
+        format: date
   Stock:
     type: object
     properties:
