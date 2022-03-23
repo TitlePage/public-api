@@ -20,7 +20,7 @@ tags:
   - name: Bookseller API
     description: Authorized bookseller APIs
   - name: Non-Bookseller API
-    description: Authorized publisher APIs    
+    description: Authorized publisher APIs
 schemes:
   - https
 paths:
@@ -61,7 +61,7 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find the nearest store with availability of an ISBN-13
+      summary: Find stores within the given radius with avaiable stock of the ISBN-13.
       description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used.
       operationId: findISBN
       produces:
