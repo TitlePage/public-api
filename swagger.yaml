@@ -273,7 +273,7 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /stock-batch/:
+  /sale-batch/:
     post:
       tags:
         - Bookseller API
@@ -287,7 +287,7 @@ paths:
           name: Stock data
           required: true
           schema:
-            $ref: '#/definitions/StockBatch'
+            $ref: '#/definitions/SaleBatch'
       responses:
         '200':
           description: successful operation
@@ -295,7 +295,7 @@ paths:
           description: Invalid Order
       security:
         - api_key: []
-  /stock/{ISBN-13}:
+  /sale/{ISBN-13}:
     put:
       tags:
         - Bookseller API
@@ -314,11 +314,11 @@ paths:
           minimum: 9780000000000
           maximum: 9790000000000
         - in: body
-          name: in-stock
-          description: The number of books in stock
+          name: Sale data
+          description: The number of books sold and currently in stock
           required: true
           schema:
-            $ref: '#/definitions/Stock'
+            $ref: '#/definitions/Sale'
       responses:
         '200':
           description: successful operation
@@ -347,18 +347,18 @@ definitions:
       expectedDate:
         type: string
         format: date
-  Stock:
+  Sale:
     type: object
     properties:
+      sold:
+        type: integer
+        format: int64
       in-stock:
         type: integer
         format: int64
       back-order:
         type: integer
         format: int64
-      timestamp:
-        type: string
-        format: date-time
     xml:
       name: Order
   TokenRequest:
@@ -435,7 +435,8 @@ definitions:
           example: 1 Main Street, Sydney, NSW
         availability:
           type: boolean
-  StockBatch:
+  SaleBatch:
+    description: "TODO: Do we need price ?"
     type: array
     items:
       type: object
@@ -444,6 +445,13 @@ definitions:
           type: integer
           format: int64
           example: 9780000000001
+        when:
+          type: string
+          format: yyyy-MM-ddTHH:mm:ss
+          example: "2022-06-25T14:23:12"
+        sold:
+          type: integer
+          format: int64  
         in-stock:
           type: integer
           format: int64
