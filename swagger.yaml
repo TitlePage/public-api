@@ -334,6 +334,9 @@ definitions:
       back-order:
         type: integer
         format: int64
+      timestamp:
+        type: string
+        format: date-time
     xml:
       name: Order
   TokenRequest:
