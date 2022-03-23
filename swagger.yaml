@@ -350,15 +350,22 @@ definitions:
   Sale:
     type: object
     properties:
+      timestamp:
+        type: string
+        format: date-time
+        example: "2022-06-25T14:23:10Z"
       sold:
         type: integer
         format: int64
+        minimum: 0
       in-stock:
         type: integer
         format: int64
+        minimum: 0
       back-order:
         type: integer
         format: int64
+        minimum: 0
     xml:
       name: Order
   TokenRequest:
@@ -445,19 +452,27 @@ definitions:
           type: integer
           format: int64
           example: 9780000000001
-        when:
+        timestamp:
           type: string
-          format: yyyy-MM-ddTHH:mm:ss
-          example: "2022-06-25T14:23:12"
+          format: date-time
+          example: "2022-06-25T14:23:10Z"
         sold:
           type: integer
-          format: int64  
+          format: int64 
+          minimum: 0
+        returned:
+          description: The book was returned/refunded.
+          type: integer
+          format: int64            
+          minimum: 0
         in-stock:
           type: integer
           format: int64
+          minimum: 0
         back-order:
           type: integer
           format: int64
+          minimum: 0
   SearchResult:
     type: array
     items:
