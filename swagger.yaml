@@ -391,6 +391,7 @@ definitions:
         availability:
           type: boolean
   Sale:
+    description: Deduplicate the sales/stock data by use of the timestamp.
     type: array
     items:
       type: object
@@ -407,11 +408,26 @@ definitions:
           type: integer
           format: int64 
           minimum: 0
-        returned:
-          description: The book was returned/refunded.
+        refunded:
+          description: The book was returned/refunded by the client
           type: integer
           format: int64            
           minimum: 0
+        returned:
+          description: The book was returned to the distributor/publisher
+          type: integer
+          format: int64            
+          minimum: 0 
+        restocked:
+          description: The number of books restocked from the distributor/publisher.
+          type: integer
+          format: int64            
+          minimum: 0          
+        shrinkage:
+          description: Reduction in the number of books due to wastage or theft.
+          type: integer
+          format: int64
+          minimum: 0          
         in-stock:
           type: integer
           format: int64
