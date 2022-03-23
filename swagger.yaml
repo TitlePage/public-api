@@ -29,7 +29,8 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: Publisher stock levels onhand / on order / CBO  / expected date
+      description: "Publisher stock levels onhand / on order / CBO  / expected date\n\n
+      @TODO: Parminder what are the fields in block 6 ?"
       operationId: publsiherStock
       produces:
         - application/json
@@ -61,8 +62,9 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find stores within the given radius with avaiable stock of the ISBN-13.
-      description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used.
+      summary: Find booksellers within the given radius with avaiable stock of the ISBN-13.
+      description: Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned. 
+      
       operationId: findISBN
       produces:
         - application/json
@@ -86,6 +88,7 @@ paths:
           minimum: -90
           maximum: 90
         - name: radius
+          description: The number of killometers from the client to the book store ( as the crow flys)
           in: query
           type: integer
           minimum: 1
@@ -125,38 +128,25 @@ paths:
           description: Invalid ISBN-13 supplied
         '404':
           description: ISBN-13 not found
-  /onix-simplified/{ISBN-13}:
-    get:
+  
+  /list/pre-built:
+    get: 
       tags:
-        - Not Recommended
-      summary: Redirects to a Simplified ONIX 3.0 file for the ISBN-13
-      description: Redirects (status 302) to the Simplified ONIX 3.0 file stored on S3. The file name is just a function of the ISBN-13 number so must be re-fetched to validate that the client has the latest copy.
-      operationId: simplifiedOnix
-      produces:
-        - application/json
-      parameters:
-        - name: ISBN-13
-          in: path
-          description: ISBN-13 of the title to return
-          required: true
-          type: integer
-          format: int64
-          minimum: 9780000000000
-          maximum: 9790000000000
+        - Bookseller API
+      summary: Return a list of all the available pre-built files.
+      operationId: listPreBuilt
       responses:
-        '302':
-          description: Redirect to the simplified ONIX 3.0 file on S3
-        '400':
-          description: Invalid ISBN-13 supplied
-        '404':
-          description: ISBN-13 not found
+        '200':
+          description: A list pre-built files
+      security:
+        - api_key: []      
   /pre-built/{NAME}:
     get:
       tags:
         - Bookseller API
-      summary: Returns a list of ISBN-13 based on the "pre-built" criteria.
-      description: The list of ISBN-13 returns can then be in turn used to call /onix or /onix-full
-      operationId: publicPreBuilt
+      summary: Returns the pre-built ONIX 3.0 file.
+      description: Full ONIX files pre-built. 
+      operationId: preBuilt
       produces:
         - application/json
       parameters:
@@ -167,11 +157,9 @@ paths:
           type: string
       responses:
         '200':
-          description: A list of ISBN-13
-        '400':
-          description: Invalid ISBN-13 supplied
+          description: The full ONIX 3.0 file.
         '404':
-          description: ISBN-13 not found
+          description: NAME not found
       security:
         - api_key: []
   /onix-full/{ISBN-13}:
@@ -206,7 +194,10 @@ paths:
       tags:
         - Bookseller API
       summary: Search by Title or ISBN-13 will return a list of matching full ONIX 3.0 URLs.
-      description: Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13   @TODO  How do we handle missing ISBN-13? @TODO What is the correct @TODO how to put in line breaks in swagger descriptions.
+      description: "Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13\n
+        
+        @TODO  How do we handle missing ISBN-13?\n
+        "
       operationId: searchOnix
       produces:
         - application/json
@@ -277,14 +268,14 @@ paths:
     post:
       tags:
         - Bookseller API
-      summary: Update a title stock levels a batch at a time.
-      description: ''
+      summary: Update stock levels & sales of a series of ISBN-13.
+      description: 'The ISBN-13/timestamp will be used to de-duplicate sales/stock levels'
       operationId: batchStock
       produces:
         - application/json
       parameters:
         - in: body
-          name: Stock data
+          name: Sale data
           required: true
           schema:
             $ref: '#/definitions/Sale'
@@ -302,6 +293,7 @@ securityDefinitions:
     in: header
 definitions:
   PublisherStock:
+    description: "TODO: Parminder fields for block 6"
     type: object
     properties:
       onhand:
@@ -378,6 +370,7 @@ definitions:
         minimum: -90
         maximum: 90
   Location:
+    description: "Location of the bookstore with stock"
     type: array
     items:
       type: object
@@ -388,8 +381,12 @@ definitions:
         address:
           type: string
           example: 1 Main Street, Sydney, NSW
-        availability:
-          type: boolean
+        phone: 
+          type: string
+          example: "(02) 555 1234"
+        website: 
+          type: string
+          example: "https://books.example.com"
   Sale:
     description: Deduplicate the sales/stock data by use of the timestamp.
     type: array
