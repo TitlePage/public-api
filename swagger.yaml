@@ -61,7 +61,7 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find the availability of an ISBN-13
+      summary: Find the nearest store with availability of an ISBN-13
       description: Returns nearest bookstore with available stock, if longitude/latitude is not given then the approximate location of the user's IP address will be used.
       operationId: findISBN
       produces:
