@@ -28,7 +28,7 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-      summary: Update the stock & availability of an ISBN-13 for a publisher
+      summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
       description: Publisher stock levels onhand / on order / CBO  / expected date
       operationId: publsiherStock
       produces:
@@ -273,6 +273,28 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
+  /stock-batch/:
+    post:
+      tags:
+        - Bookseller API
+      summary: Update a title stock levels a batch at a time.
+      description: ''
+      operationId: batchStock
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Stock data
+          required: true
+          schema:
+            $ref: '#/definitions/StockBatch'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Order
+      security:
+        - api_key: []
   /stock/{ISBN-13}:
     put:
       tags:
@@ -413,6 +435,21 @@ definitions:
           example: 1 Main Street, Sydney, NSW
         availability:
           type: boolean
+  StockBatch:
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
+          type: integer
+          format: int64
+          example: 9780000000001
+        in-stock:
+          type: integer
+          format: int64
+        back-order:
+          type: integer
+          format: int64
   SearchResult:
     type: array
     items:
