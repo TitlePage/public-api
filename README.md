@@ -1,3 +1,4 @@
 # public-api
 Public API 
-(Swagger UI)[https://titlepage.github.io/public-api/assets/apa-api.hml]
+
+[API Documentation](https://titlepage.github.io/public-api/assets/apa-api.html)
