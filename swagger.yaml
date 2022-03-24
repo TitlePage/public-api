@@ -63,8 +63,9 @@ paths:
       tags:
         - Public API
       summary: Find booksellers within the given radius with avaiable stock of the ISBN-13.
-      description: Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned. 
-      
+      description: "Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.\n
+      Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+      "
       operationId: findISBN
       produces:
         - application/json
