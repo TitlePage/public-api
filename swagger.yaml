@@ -37,7 +37,7 @@ paths:
       parameters:
         - name: ISBN-13
           in: path
-          description: ISBN-13 of the title
+          description: ISBN-13 of the title to be updated.
           required: true
           type: integer
           format: int64
@@ -53,9 +53,9 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Invalid ISBN-13 supplied
+          description: Stock information supplied ( validation issue)
         '404':
-          description: ISBN-13 not found
+          description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
   /availablity/{ISBN-13}:
