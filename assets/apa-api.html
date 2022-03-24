@@ -38,8 +38,9 @@
     <script>
     window.onload = function() {
       // Begin Swagger UI call region
+      let now=new Date();
       const ui = SwaggerUIBundle({
-        url: "https://titlepage.github.io/public-api/swagger.yaml",
+        url: "https://raw.githubusercontent.com/TitlePage/public-api/main/swagger.yaml?ts="+now.getTime(),
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
