@@ -135,6 +135,7 @@ paths:
       tags:
         - Bookseller API
       summary: Return a list of all the available pre-built files.
+      description: "TODO: create the response array schema"
       operationId: listPreBuilt
       responses:
         '200':
