@@ -29,7 +29,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: Product Supply Details (inlcuding stock <OnHand>, <OnOrder>, <CBO> )
+      description: Product supply details (inlcuding stock OnHand, OnOrder and CBO)
       operationId: publsiherStock
       consumes:
         - application/xml
