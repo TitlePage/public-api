@@ -54,7 +54,7 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Stock information supplied ( validation issue)
+          description: Invalid stock information supplied ( validation issue)
         '404':
           description: ISBN-13 not found for this publisher.
       security:
