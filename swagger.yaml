@@ -29,7 +29,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: Product supply details (inlcuding stock OnHand, OnOrder and CBO)
+      description: Product supply details (inlcuding stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
       operationId: publsiherStock
       consumes:
         - application/xml
@@ -59,14 +59,15 @@ paths:
           description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
-  /availablity/{ISBN-13}:
+  /availability/{ISBN-13}:
     get:
       tags:
         - Public API
       summary: Find booksellers within the given radius with avaiable stock of the ISBN-13.
-      description: "Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.\n
-      Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
-      "
+      description: |-
+        Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
+         Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+         TODO - would bookstores want their open hours added
       operationId: findISBN
       produces:
         - application/json
@@ -130,25 +131,25 @@ paths:
           description: Invalid ISBN-13 supplied
         '404':
           description: ISBN-13 not found
-  
   /list/pre-built:
-    get: 
+    get:
       tags:
         - Bookseller API
       summary: Return a list of all the available pre-built files.
-      description: "TODO: create the response array schema"
+      description: "'TODO: create the response array schema'
+         TODO - we would only send the prebuilts that are available to all booksellers."
       operationId: listPreBuilt
       responses:
         '200':
           description: A list pre-built files
       security:
-        - api_key: []      
+        - api_key: []
   /pre-built/{NAME}:
     get:
       tags:
         - Bookseller API
       summary: Returns the pre-built ONIX 3.0 file.
-      description: Full ONIX files pre-built. 
+      description: Full ONIX files pre-built.
       operationId: preBuilt
       produces:
         - application/json
@@ -197,10 +198,11 @@ paths:
       tags:
         - Bookseller API
       summary: Search by Title or ISBN-13 will return a list of matching full ONIX 3.0 URLs.
-      description: "Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13\n
-        
-        @TODO  How do we handle missing ISBN-13?\n
-        "
+      description: |-
+        Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
+
+        @TODO  How do we handle missing ISBN-13? - provide in the JSON file, at the top, a list of ISBNs that we haven't matched.
+         
       operationId: searchOnix
       produces:
         - application/json
@@ -249,7 +251,7 @@ paths:
       tags:
         - Bookseller API
       summary: Request a book seller token.
-      description: ''
+      description: 'TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some '
       operationId: requestBooksellerToken
       produces:
         - application/json
@@ -272,7 +274,10 @@ paths:
       tags:
         - Bookseller API
       summary: Update stock levels & sales of a series of ISBN-13.
-      description: 'The ISBN-13/timestamp will be used to de-duplicate sales/stock levels'
+      description: "The ISBN-13/timestamp will be used to de-duplicate sales/stock levels \n
+           TODO - stage 1 sales - a daily running total of sales that could be sent multiple times a day or once a day in a batch \n
+           - also want the average selling price and the currency code \n
+           - Stage 1 stocks - only want the current in-stock/available, on-order, committed back-order"
       operationId: batchStock
       produces:
         - application/json
@@ -296,7 +301,7 @@ securityDefinitions:
     in: header
 definitions:
   PublisherStock:
-    description: "Multiple Block 6"
+    description: Multiple Block 6
     type: string
     xml:
       name: ProductSupply
@@ -318,13 +323,13 @@ definitions:
             properties:
               SupplierRole:
                 type: integer
-                example: "00"
+                example: '00'
               SupplierIdentifier:
                 type: object
                 properties:
                   SupplierIDType:
                     type: number
-                    example: 07
+                    example: 7
                   IDValue:
                     type: number
                     example: 9021000
@@ -348,7 +353,7 @@ definitions:
             properties:
               SupplyDateRole:
                 type: number
-                example: 02
+                example: 2
               Date:
                 type: string
                 format: date
@@ -356,7 +361,7 @@ definitions:
                 properties:
                   dateformat:
                     type: number
-                    example: "00"
+                    example: '00'
                     xml:
                       attribute: true
           Stock:
@@ -375,7 +380,7 @@ definitions:
             properties:
               PriceType:
                 type: number
-                example: "02"
+                example: '02'
               PriceAmount:
                 type: number
                 example: 22.99
@@ -384,7 +389,7 @@ definitions:
                 properties:
                   TaxType:
                     type: number
-                    example: 01
+                    example: 1
                   TaxRateCode:
                     type: string
                     example: S
@@ -396,7 +401,7 @@ definitions:
                     example: 19.99
                   TaxAmount:
                     type: number
-                    example: 3.00
+                    example: 3
               CurrencyCode:
                 type: string
                 example: AUD
@@ -462,7 +467,7 @@ definitions:
         minimum: -90
         maximum: 90
   Location:
-    description: "Location of the bookstore with stock"
+    description: Location of the bookstore with stock
     type: array
     items:
       type: object
@@ -473,12 +478,12 @@ definitions:
         address:
           type: string
           example: 1 Main Street, Sydney, NSW
-        phone: 
+        phone:
           type: string
-          example: "(02) 555 1234"
-        website: 
+          example: (02) 555 1234
+        website:
           type: string
-          example: "https://books.example.com"
+          example: https://books.example.com
   Sale:
     description: Deduplicate the sales/stock data by use of the timestamp.
     type: array
@@ -492,31 +497,31 @@ definitions:
         timestamp:
           type: string
           format: date-time
-          example: "2022-06-25T14:23:10Z"
+          example: '2022-06-25T14:23:10Z'
         sold:
           type: integer
-          format: int64 
+          format: int64
           minimum: 0
         refunded:
           description: The book was returned/refunded by the client
           type: integer
-          format: int64            
+          format: int64
           minimum: 0
         returned:
           description: The book was returned to the distributor/publisher
           type: integer
-          format: int64            
-          minimum: 0 
+          format: int64
+          minimum: 0
         restocked:
           description: The number of books restocked from the distributor/publisher.
           type: integer
-          format: int64            
-          minimum: 0          
+          format: int64
+          minimum: 0
         shrinkage:
           description: Reduction in the number of books due to wastage or theft.
           type: integer
           format: int64
-          minimum: 0          
+          minimum: 0
         in-stock:
           type: integer
           format: int64
