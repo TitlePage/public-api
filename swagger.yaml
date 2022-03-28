@@ -21,6 +21,8 @@ tags:
     description: Authorized bookseller APIs
   - name: Non-Bookseller API
     description: Authorized publisher APIs
+  - name: APA Administration API
+    description: APA administration APIs
 schemes:
   - https
 paths:
@@ -254,11 +256,11 @@ paths:
           description: successful operation
         '400':
           description: Invalid Request
-  /bookseller-token/:
+  /bookseller/:
     post:
       tags:
-        - Bookseller API
-      summary: Request a book seller token.
+        - APA Administration API
+      summary: Create a book seller and return the book seller token.
       description: |-
         TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
         TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
@@ -271,7 +273,32 @@ paths:
           description: Request a booker seller token
           required: true
           schema:
-            $ref: '#/definitions/TokenBooksellerRequest'
+            $ref: '#/definitions/CreateBooksellerRequest'
+      responses:
+        '200':
+          description: successful operation
+          schema: 
+            $ref: '#/definitions/CreateBooksellerResponse'
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Bookseller API
+      summary: update a book seller details
+      description: |-
+        Update book seller details.
+      operationId: updateBookseller
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: tokenBooksellerRequest
+          description: Request a booker seller token
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateBooksellerRequest'
       responses:
         '200':
           description: successful operation
@@ -279,6 +306,44 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
+  /reset-bookseller-token/:
+    post:
+      tags:
+        - Bookseller API
+      summary: Reset current bookseller's token
+      description: Reset the current bookseller's token. Previous token will be removed
+      operationId: resetBooksellerToken
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema: 
+            $ref: '#/definitions/CreateBooksellerResponse'
+        '400':
+          description: Invalid Request
+  /reset-bookseller-token/{SAN}:
+    post:
+      tags:
+        - APA Administration API
+      summary: Reset a bookseller's token
+      description: Reset a bookseller's token. Previous token will be removed
+      operationId: resetBooksellerTokenAPA
+      produces:
+        - application/json
+      parameters:
+        - name: SAN
+          in: path
+          description: 'The SAN of the bookseller'
+          type: string
+          required: true
+      responses:
+        '200':
+          description: successful operation
+          schema: 
+            $ref: '#/definitions/CreateBooksellerResponse'
+        '400':
+          description: Invalid Request
   /sale:
     post:
       tags:
@@ -449,21 +514,51 @@ definitions:
         type: boolean
       requireShopify:
         type: boolean
-  TokenBooksellerRequest:
+  CreateBooksellerRequest:
     type: object
     properties:
+      nationalIDCode:
+        type: string
+        example: AU
+      SAN:
+        type: integer
+        example: 12345
+      title:
+        type: string
+        example: Mr
       firstName:
         type: string
-        example: Jane
+        example: Joe
       lastName:
         type: string
-        example: Doe
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
       email:
         type: string
-        example: jane@books.example.com
-      website:
+        example: joe@example.com
+      companyName:
         type: string
-        example: https://books.example.com
+        example: Joe's Bookshop
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
       postcode:
         type: integer
         minimum: 1000
@@ -477,6 +572,71 @@ definitions:
         type: number
         minimum: -90
         maximum: 90
+  UpdateBooksellerRequest:
+    type: object
+    properties:
+      nationalIDCode:
+        type: string
+        example: AU
+      title:
+        type: string
+        example: Mr
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
+      email:
+        type: string
+        example: joe@example.com
+      companyName:
+        type: string
+        example: Joe's Bookshop
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+      latitude:
+        type: number
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        minimum: -90
+        maximum: 90
+  CreateBooksellerResponse:
+    description: Create bookseller response
+    type: object
+    properties:
+      SAN:
+        type: integer
+        example: 12345
+      token:
+        type: string
+        example: okBg8pddEExTbNcNpJi9okBg8pddEExTbNcNpJi9okBg8pddEExTbNcNpJi9
   Location:
     description: Location of the bookstore with stock
     type: array
