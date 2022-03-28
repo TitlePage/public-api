@@ -328,6 +328,8 @@ paths:
             $ref: '#/definitions/CreateBooksellerResponse'
         '400':
           description: Invalid Request
+      security:
+        - api_key: []
   /sale:
     post:
       tags:
