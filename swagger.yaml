@@ -259,7 +259,9 @@ paths:
       tags:
         - Bookseller API
       summary: Request a book seller token.
-      description: 'TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some '
+      description: |-
+        TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
+        TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
       operationId: requestBooksellerToken
       produces:
         - application/json
