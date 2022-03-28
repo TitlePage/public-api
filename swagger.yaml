@@ -306,22 +306,6 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /reset-bookseller-token/:
-    post:
-      tags:
-        - Bookseller API
-      summary: Reset current bookseller's token
-      description: Reset the current bookseller's token. Previous token will be removed
-      operationId: resetBooksellerToken
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: successful operation
-          schema: 
-            $ref: '#/definitions/CreateBooksellerResponse'
-        '400':
-          description: Invalid Request
   /reset-bookseller-token/{SAN}:
     post:
       tags:
