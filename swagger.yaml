@@ -22,7 +22,9 @@ tags:
   - name: Non-Bookseller API
     description: Authorized publisher APIs
   - name: APA Administration API
-    description: APA administration APIs
+    description: APA administration API
+  - name: Stage 2
+    description: APIs for Stage 2 implementation
 schemes:
   - https
 paths:
@@ -31,7 +33,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: |- 
+      description: |-
         Product supply details (inlcuding stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
         TODO - Parminder can you give Lei/Tina a few complex eampless. We need a second endpoint which does only a stock update ( return an error if we can't uniquely identify)
         TODO - Find these complex exmaples with regex/wc etc ( find an ISBN with the most SupplyBlocks.)
@@ -118,8 +120,7 @@ paths:
       tags:
         - Public API
       summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13
-      description: |-
-       Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      description: Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
       operationId: publicOnix
       produces:
         - application/json
@@ -144,8 +145,7 @@ paths:
       tags:
         - Bookseller API
       summary: Return a list of pre-built files available to all booksellers and their own custom pre-builts.
-      description: |-
-       TODO: OnixPreBuilt doesn't have a unique NAME field. Can we use the fileName field? But we have to make the fileName field unique
+      description: 'TODO: OnixPreBuilt doesn''t have a unique NAME field. Can we use the fileName field? But we have to make the fileName field unique'
       operationId: listPreBuilt
       responses:
         '200':
@@ -159,7 +159,7 @@ paths:
       tags:
         - Bookseller API
       summary: Returns the pre-built ONIX 3.0 file.
-      description: |- 
+      description: |-
         Full ONIX files pre-built.
         TODO: do we response the pre-built file in a JSON format or send the file for the user to download?
       operationId: preBuilt
@@ -241,7 +241,7 @@ paths:
   /request-token:
     post:
       tags:
-        - Public API
+        - Stage 2
       summary: Request a public token
       description: ''
       operationId: requestToken
@@ -263,9 +263,9 @@ paths:
     post:
       tags:
         - APA Administration API
-      summary: Create a book seller
+      summary: Create a bookseller
       description: |-
-        TODO - the schema, operation & body names are wrong       
+        TODO - the schema, operation & body names are wrong      
         TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
         TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
         Create a book seller
@@ -275,7 +275,7 @@ paths:
       parameters:
         - in: body
           name: createBooksellerRequest
-          description: Create a booker seller
+          description: Create a bookerseller
           required: true
           schema:
             $ref: '#/definitions/CreateBooksellerRequest'
@@ -289,11 +289,11 @@ paths:
     put:
       tags:
         - Bookseller API
-      summary: update a book seller details
+      summary: update a bookseller details
       description: |-
         TODO - this should be a PUT if updating and the bookseller id should be in the path
         TODO - Need to generate tokens for publishers ( under admin ) also
-        TODO - SAN 
+        TODO - SAN
         Update book seller details.
       operationId: updateBookseller
       produces:
@@ -301,8 +301,7 @@ paths:
       parameters:
         - in: body
           name: updateBooksellerRequest
-          description: |-
-             Update bookseller
+          description: Update bookseller
           required: true
           schema:
             $ref: '#/definitions/UpdateBooksellerRequest'
@@ -313,30 +312,110 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /generate-token/{SAN}:
+  /publisher:
+    post:
+      tags:
+        - APA Administration API
+      summary: Create a publisher
+      description: |-
+        TODO - the schema, operation & body names
+        TODO - do we use pubID
+        TODO - who is going to register the publishers? We might need a create publisher ReST for APA staff, and a update publisher details ReST for either APA staff or logged in publisher. The token API only generate/regenerate the API for this publisher. It can be requested by either APA staff or logged in publisher. We need the publisher details when we create them or update details. But the details are not necessary when we create the token for them.
+        Create a book seller
+      operationId: requestPublisher
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: createPublisherRequest
+          description: Create a publisher
+          required: true
+          schema:
+            $ref: '#/definitions/CreatePublisherRequest'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: update a pulisher details
+      description: |-
+        TODO - this should be a PUT if updating and the publisher id should be in the path
+        Update publisher details.
+      operationId: updatePublisher
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: updatePublisherRequest
+          description: Update publisher
+          required: true
+          schema:
+            $ref: '#/definitions/UpdatePublisherRequest'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
+  /generate-token-bookseller/{SAN}:
     post:
       tags:
         - APA Administration API
       summary: Generate a bookseller's token
-      description: "Generate a bookseller's token. The previous token will be removed
-                    @TODO fix operation id & model name
-                    @TODO POST parameters are normally in the body model 
-                    @TODO this should be the bookseller's token ( different parameters for publisher). 
-                    
-                    @TODO Cat how do we do this for all book stores ?  ---- Need a call 
-                 "
+      description: |-
+        Generate a bookseller's token. The previous token will be remove
+          @TODO fix operation id & model name @TODO POST parameters are normally in the body model
+          @TODO this should be the bookseller's token ( different parameters for publisher).
+          @TODO Cat how do we do this for all book stores ?  ---- Need a call  
       operationId: generateBooksellerTokenAPA
       produces:
         - application/json
       parameters:
         - name: SAN
           in: path
-          description: 'The SAN of the bookseller'
+          description: The SAN of the bookseller
           type: string
           required: true
         - name: email
           in: query
-          description: 'The email of the bookseller to accept the token'
+          description: The email of the bookseller to accept the token
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Token is sent successfully
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
+  /generate-token-publisher/{pubID}:
+    post:
+      tags:
+        - APA Administration API
+      summary: Generate a publisher's token
+      description: |-
+        Generate a publisher's token. The previous token will be removed
+          @TODO fix operation id & model name @TODO POST parameters are normally in the body model
+          @TODO this should be the publisher's token (different parameters for bookseller).
+          @TODO Cat how do we do this for all publishers?  ---- Need a call  
+      operationId: generatePublisherTokenAPA
+      produces:
+        - application/json
+      parameters:
+        - name: pubID
+          in: path
+          description: The pubID of the publisher
+          type: string
+          required: true
+        - name: email
+          in: query
+          description: The email of the publisher to accept the token
           type: string
           required: true
       responses:
@@ -373,6 +452,108 @@ paths:
           description: Invalid Sale
       security:
         - api_key: []
+  /publisher/simple-stock/{ISBN-13}:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple)
+      description: |-
+        Product supply details (inlcuding stock OnHand, OnOrder and CBO)
+        TODO - Parminder can you give Lei/Tina a few simple examples. We need a second endpoint which does only a stock update (return an error if we can't uniquely identify)
+        TODO - Find these simple examples with regex/wc etc (find an ISBN with only one SupplyBlock.)
+      operationId: publsiherSimpleStock
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to be updated.
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+        - in: body
+          name: productSupply
+          description: The ONIX 3.0 Block 6, TODO, took away the full block 6 array, it will be a simple update
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherSimpleStock'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied (validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
+  /browser-extension:
+    get:
+      tags:
+        - Stage 2
+      summary: Public API browser extension to see basic bibliographic data for ISBN-13
+      description: |-
+        Browser extension similar to Biblio-matic - will be a Stage 2 Public API
+         @TODO - Paramters
+         @TODO - Produces
+         @TODO - operationId
+         @TODO - need a response for when the ISBN-13 isn't in the TP database (see Biblio-matic extsions response)
+      operationId: TODO
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Request
+  /bookseller-25hours-no-updates/{SAN}:
+    post:
+      tags:
+        - Stage 2
+      summary: Automatic notifications when a bookseller hasn't sent a sales/stock update for 25 hours.
+      description: |-
+        Send email to bookseller if they haven't updated sales/stock in past 25 hours - will be a Stage 2 Public API
+         @TODO - Paramters
+         @TODO - Produces
+         @TODO - operationId
+         @TODO - need a response for when the ISBN-13 isn't in the TP database (see Biblio-matic extsions response)
+      operationId: notificationBookseller25hoursNoUpdates
+      produces:
+        - application/json
+      parameters:
+        - name: SAN
+          in: path
+          description: The SAN of the bookseller
+          type: string
+          required: true
+        - name: email
+          in: query
+          description: The email of the bookseller to receive the notification
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Notification is sent successfully
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
+  /ecommerce-order:
+    post:
+      tags:
+        - Stage 2
+      summary: Send a Pacstream type ecommerce order directly to a Publisher.
+      description: |-
+        The bookseller can send a Pacstream type order from their POS to the Publisher via TP's API - not needing to send an invoice at this stage but need to know if the API needs to send order updates from the publisher/distributer
+          @TODO - discuss with team what to send and we need to receive back a PO acknowledgement from the publisher and send that to the bookseller
+      responses:
+        '200':
+          description: Order is sent successfully
+        '400':
+          description: Invalid Request
+      security:
+        - api_key: []
 securityDefinitions:
   api_key:
     type: apiKey
@@ -381,8 +562,115 @@ securityDefinitions:
 definitions:
   PublisherStock:
     description: |-
-       Multiple Block 6
-       TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+      Multiple Block 6
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: ProductSupply
+    properties:
+      Market:
+        type: object
+        properties:
+          Territory:
+            type: object
+            properties:
+              CountriesIncluded:
+                type: string
+                example: AU
+      SupplyDetail:
+        type: object
+        properties:
+          Supplier:
+            type: object
+            properties:
+              SupplierRole:
+                type: integer
+                example: '00'
+              SupplierIdentifier:
+                type: object
+                properties:
+                  SupplierIDType:
+                    type: number
+                    example: 7
+                  IDValue:
+                    type: number
+                    example: 9021000
+              SupplierName:
+                type: string
+                example: XYZ Distribution Services
+              TelephoneNumber:
+                type: string
+                example: +61 2 2000 2000
+              FaxNumber:
+                type: string
+                example: +61 2 2000 2000
+              EmailAddress:
+                type: string
+                example: email@exmaple.com
+          ProductAvailability:
+            type: number
+            example: 10
+          SupplyDate:
+            type: object
+            properties:
+              SupplyDateRole:
+                type: number
+                example: 2
+              Date:
+                type: string
+                format: date
+                example: 20220501
+                properties:
+                  dateformat:
+                    type: number
+                    example: '00'
+                    xml:
+                      attribute: true
+          Stock:
+            type: object
+            properties:
+              OnHand:
+                type: integer
+                minimum: 0
+                example: 25
+              OnOrder:
+                type: integer
+                minimum: 0
+                example: 44
+          Price:
+            type: object
+            properties:
+              PriceType:
+                type: number
+                example: '02'
+              PriceAmount:
+                type: number
+                example: 22.99
+              Tax:
+                type: object
+                properties:
+                  TaxType:
+                    type: number
+                    example: 1
+                  TaxRateCode:
+                    type: string
+                    example: S
+                  TaxRatePercent:
+                    type: number
+                    example: 15
+                  TaxableAmount:
+                    type: number
+                    example: 19.99
+                  TaxAmount:
+                    type: number
+                    example: 3
+              CurrencyCode:
+                type: string
+                example: AUD
+  PublisherSimpleStock:
+    description: |-
+      Simple stock update to one supplier per country per ISBN-13
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
     type: string
     xml:
       name: ProductSupply
@@ -577,6 +865,64 @@ definitions:
         type: number
         minimum: -90
         maximum: 90
+  CreatePublisherRequest:
+    type: object
+    properties:
+      nationalIDCode:
+        type: string
+        example: AU
+      SAN:
+        type: integer
+        example: 12345
+      title:
+        type: string
+        example: Mr
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
+      email:
+        type: string
+        example: joe@example.com
+      companyName:
+        type: string
+        example: Joe's Publishing
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+      latitude:
+        type: number
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        minimum: -90
+        maximum: 90
   UpdateBooksellerRequest:
     type: object
     properties:
@@ -632,6 +978,61 @@ definitions:
         type: number
         minimum: -90
         maximum: 90
+  UpdatePublisherRequest:
+    type: object
+    properties:
+      nationalIDCode:
+        type: string
+        example: AU
+      title:
+        type: string
+        example: Mr
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
+      email:
+        type: string
+        example: joe@example.com
+      companyName:
+        type: string
+        example: Joe's Publisher
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+      latitude:
+        type: number
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        minimum: -90
+        maximum: 90
   Location:
     description: Location of the bookstore with stock
     type: array
@@ -652,8 +1053,8 @@ definitions:
           example: https://books.example.com
   Sale:
     description: |-
-     Deduplicate the sales/stock data by use of the timestamp. 
-     The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
+      Deduplicate the sales/stock data by use of the timestamp.
+      The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
     type: array
     items:
       type: object
@@ -666,30 +1067,30 @@ definitions:
           type: string
           format: date-time
           example: '2022-06-25T14:23:10Z'
-          description: |- 
-             TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
-             TODO - This would be a date now ( and where ever called )
+          description: |-
+            TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
+            TODO - This would be a date now ( and where ever called )
         sold:
           type: integer
           format: int64
           minimum: 0
         refunded:
-          description: The book was returned/refunded by the client TODO - remove 
+          description: The book was returned/refunded by the client TODO - remove
           type: integer
           format: int64
           minimum: 0
         returned:
-          description: The book was returned to the distributor/publisher  TODO - remove 
+          description: The book was returned to the distributor/publisher  TODO - remove
           type: integer
           format: int64
           minimum: 0
         restocked:
-          description: The number of books restocked from the distributor/publisher.  TODO - remove 
+          description: The number of books restocked from the distributor/publisher.  TODO - remove
           type: integer
           format: int64
           minimum: 0
         shrinkage:
-          description: Reduction in the number of books due to wastage or theft.  TODO - remove 
+          description: Reduction in the number of books due to wastage or theft.  TODO - remove
           type: integer
           format: int64
           minimum: 0
