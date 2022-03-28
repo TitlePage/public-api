@@ -235,7 +235,7 @@ paths:
           description: No valid query parameters
       security:
         - api_key: []
-  /request-token/:
+  /request-token:
     post:
       tags:
         - Public API
@@ -256,29 +256,28 @@ paths:
           description: successful operation
         '400':
           description: Invalid Request
-  /bookseller/:
+  /bookseller:
     post:
       tags:
         - APA Administration API
-      summary: Create a book seller and return the book seller token.
+      summary: Create a book seller
       description: |-
         TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
         TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
+        Create a book seller
       operationId: requestBooksellerToken
       produces:
         - application/json
       parameters:
         - in: body
           name: tokenBooksellerRequest
-          description: Request a booker seller token
+          description: Create a booker seller
           required: true
           schema:
             $ref: '#/definitions/CreateBooksellerRequest'
       responses:
         '200':
           description: successful operation
-          schema: 
-            $ref: '#/definitions/CreateBooksellerResponse'
         '400':
           description: Invalid Request
       security:
@@ -306,13 +305,13 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /reset-bookseller-token/{SAN}:
+  /generate-token/{SAN}:
     post:
       tags:
         - APA Administration API
-      summary: Reset a bookseller's token
-      description: Reset a bookseller's token. Previous token will be removed
-      operationId: resetBooksellerTokenAPA
+      summary: Generate a bookseller's token
+      description: Generate a bookseller's token. The previous token will be removed
+      operationId: generateBooksellerTokenAPA
       produces:
         - application/json
       parameters:
@@ -321,11 +320,14 @@ paths:
           description: 'The SAN of the bookseller'
           type: string
           required: true
+        - name: email
+          in: query
+          description: 'The email of the bookseller to accept the token'
+          type: string
+          required: true
       responses:
         '200':
-          description: successful operation
-          schema: 
-            $ref: '#/definitions/CreateBooksellerResponse'
+          description: Token is sent successfully
         '400':
           description: Invalid Request
       security:
