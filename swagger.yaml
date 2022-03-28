@@ -31,7 +31,10 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: Product supply details (inlcuding stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
+      description: |- 
+        Product supply details (inlcuding stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
+        TODO - Parminder can you give Lei/Tina a few complex eampless. We need a second endpoint which does only a stock update ( return an error if we can't uniquely identify)
+        TODO - Find these complex exmaples with regex/wc etc ( find an ISBN with the most SupplyBlocks.)
       operationId: publsiherStock
       consumes:
         - application/xml
@@ -350,7 +353,6 @@ paths:
       summary: Update stock levels & sales of a series of ISBN-13.
       description: |-
         The ISBN-13/timestamp will be used to de-duplicate sales/stock levels
-         TODO - Parminder ring me, we need a second endpoint which does only a stock update ( return an error if we can't uniquely identify)
          TODO - Parminder please grab a complex block 6, and we will discuss the rules to uniquely identify the stock to be updated.
          TODO - stage 1 sales - a daily running total of sales that could be sent multiple times a day or once a day in a batch
          TODO - also want the average selling price and the currency code
@@ -378,7 +380,9 @@ securityDefinitions:
     in: header
 definitions:
   PublisherStock:
-    description: Multiple Block 6
+    description: |-
+       Multiple Block 6
+       TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
     type: string
     xml:
       name: ProductSupply
