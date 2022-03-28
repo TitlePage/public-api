@@ -140,7 +140,7 @@ paths:
         - Bookseller API
       summary: Return a list of pre-built files available to all booksellers and their own custom pre-builts.
       description: |-
-       TODO: create the response array schema to send the prebuilts that are available to all booksellers and any custom pre-builts for this bookseller.
+       TODO: OnixPreBuilt doesn't have a unique NAME field. Can we use the fileName field? But we have to make the fileName field unique
       operationId: listPreBuilt
       responses:
         '200':
