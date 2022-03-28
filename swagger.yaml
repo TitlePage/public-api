@@ -626,16 +626,6 @@ definitions:
         type: number
         minimum: -90
         maximum: 90
-  CreateBooksellerResponse:
-    description: Create bookseller response
-    type: object
-    properties:
-      SAN:
-        type: integer
-        example: 12345
-      token:
-        type: string
-        example: okBg8pddEExTbNcNpJi9okBg8pddEExTbNcNpJi9okBg8pddEExTbNcNpJi9
   Location:
     description: Location of the bookstore with stock
     type: array
