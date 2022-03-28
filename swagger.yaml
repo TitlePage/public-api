@@ -67,7 +67,9 @@ paths:
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
          Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
-         TODO - would bookstores want their open hours added
+         TODO - Robbie - This could be modified to give values such as, Low Stock or In Stock, or traffic lights
+         What would bookstores prefer?
+         What store info would bookstores want? We have basic info, would they want their open hours added?
       operationId: findISBN
       produces:
         - application/json
@@ -111,7 +113,8 @@ paths:
       tags:
         - Public API
       summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13
-      description: Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      description: |-
+       Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
       operationId: publicOnix
       produces:
         - application/json
@@ -135,13 +138,15 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Return a list of all the available pre-built files.
-      description: "'TODO: create the response array schema'
-         TODO - we would only send the prebuilts that are available to all booksellers."
+      summary: Return a list of pre-built files available to all booksellers and their own custom pre-builts.
+      description: |-
+       TODO: create the response array schema to send the prebuilts that are available to all booksellers and any custom pre-builts for this bookseller.
       operationId: listPreBuilt
       responses:
         '200':
-          description: A list pre-built files
+          description: A list of pre-built files that are available to all booksellers, and their own custom pre-built files.
+          schema:
+            $ref: '#/definitions/ListPreBuilt'
       security:
         - api_key: []
   /pre-built/{NAME}:
@@ -274,10 +279,11 @@ paths:
       tags:
         - Bookseller API
       summary: Update stock levels & sales of a series of ISBN-13.
-      description: "The ISBN-13/timestamp will be used to de-duplicate sales/stock levels \n
-           TODO - stage 1 sales - a daily running total of sales that could be sent multiple times a day or once a day in a batch \n
-           - also want the average selling price and the currency code \n
-           - Stage 1 stocks - only want the current in-stock/available, on-order, committed back-order"
+      description: |-
+        The ISBN-13/timestamp will be used to de-duplicate sales/stock levels
+         TODO - stage 1 sales - a daily running total of sales that could be sent multiple times a day or once a day in a batch
+         - also want the average selling price and the currency code
+         - Stage 1 stocks - only want the current in-stock/available, on-order, committed back-order
       operationId: batchStock
       produces:
         - application/json
@@ -530,6 +536,20 @@ definitions:
           type: integer
           format: int64
           minimum: 0
+  ListPreBuilt:
+    type: array
+    items:
+      type: object
+      properties:
+        fileName:
+          type: string
+          example: Australian-Fishing-Network
+        description:
+          type: string
+          example: Australian Fishing Network - New Release Titles for upcoming 180 days.
+        onixVersion:
+          type: string
+          example: ONIX_3_0
   SearchResult:
     type: array
     items:
