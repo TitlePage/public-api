@@ -262,6 +262,7 @@ paths:
         - APA Administration API
       summary: Create a book seller
       description: |-
+        TODO - the schema, operation & body names are wrong       
         TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
         TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
         Create a book seller
@@ -287,6 +288,9 @@ paths:
         - Bookseller API
       summary: update a book seller details
       description: |-
+        TODO - this should be a PUT if updating and the bookseller id should be in the path
+        TODO - Need to generate tokens for publishers ( under admin ) also
+        TODO - SAN 
         Update book seller details.
       operationId: updateBookseller
       produces:
@@ -294,7 +298,9 @@ paths:
       parameters:
         - in: body
           name: tokenBooksellerRequest
-          description: Request a booker seller token
+          description: |-
+             Request a booker seller token
+             TODO not token here
           required: true
           schema:
             $ref: '#/definitions/UpdateBooksellerRequest'
@@ -310,7 +316,13 @@ paths:
       tags:
         - APA Administration API
       summary: Generate a bookseller's token
-      description: Generate a bookseller's token. The previous token will be removed
+      description: "Generate a bookseller's token. The previous token will be removed
+                    @TODO fix operation id & model name
+                    @TODO POST parameters are normally in the body model 
+                    @TODO this should be the bookseller's token ( different parameters for publisher). 
+                    
+                    @TODO Cat how do we do this for all book stores ?  ---- Need a call 
+                 "
       operationId: generateBooksellerTokenAPA
       produces:
         - application/json
