@@ -154,7 +154,9 @@ paths:
       tags:
         - Bookseller API
       summary: Returns the pre-built ONIX 3.0 file.
-      description: Full ONIX files pre-built.
+      description: |- 
+        Full ONIX files pre-built.
+        TODO: do we response the pre-built file in a JSON format or send the file for the user to download?
       operationId: preBuilt
       produces:
         - application/json
