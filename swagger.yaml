@@ -208,7 +208,8 @@ paths:
       description: |-
         Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
 
-        @TODO  How do we handle missing ISBN-13? - provide in the JSON file, at the top, a list of ISBNs that we haven't matched.
+        @TODO  How do we handle missing ISBN-13? - provide in the JSONObject response, at the top, a list of ISBNs that we haven't matched.
+        @TODO  But why do we want to return all the missing ISBN-13? Return a JSONObject is more complicated than returning a JSONArray.
          
       operationId: searchOnix
       produces:
