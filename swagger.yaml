@@ -541,7 +541,7 @@ definitions:
     items:
       type: object
       properties:
-        fileName:
+        NAME:
           type: string
           example: Australian-Fishing-Network
         description:
