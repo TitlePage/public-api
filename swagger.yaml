@@ -501,6 +501,7 @@ paths:
          @TODO - Produces
          @TODO - operationId
          @TODO - need a response for when the ISBN-13 isn't in the TP database (see Biblio-matic extsions response)
+         @TODO - Tina.. This should be covered by the /onix and the /availablity APIs, yes we will need to create a browser extension which calls these endpoints.
       operationId: TODO
       responses:
         '200':
