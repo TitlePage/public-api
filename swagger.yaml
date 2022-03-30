@@ -190,7 +190,6 @@ paths:
       summary: Returns to FULL ONIX 3.0 file for the ISBN-13
       description: |-
         Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
-        TODO: please confirm the bookseller should not access this ISBN if it's not authorized to access it. If it's not authorized, this API should redirect to the redacted ONIX file. And a silly question: how do we know if a title is authrozed to a bookseller.
       operationId: fullOnix
       produces:
         - application/json
