@@ -295,12 +295,12 @@ paths:
     put:
       tags:
         - Bookseller API
-      summary: update a bookseller details
+      summary: update bookseller details
       description: |-
         TODO - this should be a PUT if updating and the bookseller id should be in the path
         TODO - Need to generate tokens for publishers ( under admin ) also
         TODO - SAN
-        Update book seller details.
+        Update bookseller details.
       operationId: updateBookseller
       produces:
         - application/json
