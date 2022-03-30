@@ -179,7 +179,7 @@ paths:
           type: string
       responses:
         '200':
-          description: The full ONIX 3.0 file.
+          description: JSON or the prebuilt file
         '404':
           description: NAME not found
       security:
