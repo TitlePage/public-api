@@ -144,8 +144,12 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Return a list of pre-built files available to all booksellers and their own custom pre-builts.
-      description: 'TODO: OnixPreBuilt doesn''t have a unique NAME field. Can we use the fileName field? But we have to make the fileName field unique'
+      summary: Return a list of pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
+      description: |- 
+        TODO: Mark the fileName field unique and searchable
+        TODO: Add warning message for the critical fields such as filename, criteria, onix version etc.
+        TODO: Add a 'updated' field for the last update time of this prebuilt
+        TODO: Parminder, please add the 'filename' field into the search screen of the prebuilt
       operationId: listPreBuilt
       responses:
         '200':
