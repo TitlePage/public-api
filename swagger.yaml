@@ -150,7 +150,7 @@ paths:
         TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paging the list?
         TODO - Mark the fileName field unique and searchable
         TODO - Add warning message for the critical fields such as filename, criteria, onix version etc.
-        TODO: Parminder, please add the 'filename' field into the search screen of the prebuilt
+        TODO - Parminder, please add the 'filename' field into the search screen of the prebuilt
       operationId: listPreBuilt
       responses:
         '200':
