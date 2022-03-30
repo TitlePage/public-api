@@ -25,6 +25,8 @@ tags:
     description: APA administration API
   - name: Stage 2
     description: APIs for Stage 2 implementation
+  - name: Stage 3
+    description: APIs for Stage 3 implementation
 schemes:
   - https
 paths:
@@ -247,7 +249,7 @@ paths:
   /request-token:
     post:
       tags:
-        - Stage 2
+        - Stage 3
       summary: Request a public token
       description: ''
       operationId: requestToken
@@ -500,10 +502,10 @@ paths:
   /browser-extension:
     get:
       tags:
-        - Stage 2
+        - Stage 3
       summary: Public API browser extension to see basic bibliographic data for ISBN-13
       description: |-
-        Browser extension similar to Biblio-matic - will be a Stage 2 Public API
+        Browser extension similar to Biblio-matic - will be a Stage 3 Public API
          @TODO - Paramters
          @TODO - Produces
          @TODO - operationId
@@ -518,10 +520,10 @@ paths:
   /bookseller-25hours-no-updates/{SAN}:
     post:
       tags:
-        - Stage 2
+        - Stage 3
       summary: Automatic notifications when a bookseller hasn't sent a sales/stock update for 25 hours.
       description: |-
-        Send email to bookseller if they haven't updated sales/stock in past 25 hours - will be a Stage 2 Public API
+        Send email to bookseller if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
          @TODO - Paramters
          @TODO - Produces
          @TODO - operationId
