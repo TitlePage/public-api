@@ -34,9 +34,9 @@ paths:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
       description: |-
-        Product supply details (inlcuding stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
-        TODO - Parminder can you give Lei/Tina a few complex eampless. We need a second endpoint which does only a stock update ( return an error if we can't uniquely identify)
-        TODO - Find these complex exmaples with regex/wc etc ( find an ISBN with the most SupplyBlocks.)
+        Product supply details (including stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
+        TODO - Parminder - give Lei/Tina a few complex examples. We need a second endpoint that does only a stock update (return an error if we can't uniquely identify it)
+        TODO - Parminder - Find these complex examples with regex/wc etc (find an ISBN with the most SupplyBlocks)
       operationId: publsiherStock
       consumes:
         - application/xml
@@ -70,7 +70,7 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find booksellers within the given radius with avaiable stock of the ISBN-13.
+      summary: Find booksellers within the given radius with available stock of the ISBN-13.
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
          Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
@@ -161,7 +161,7 @@ paths:
       summary: Returns the pre-built ONIX 3.0 file.
       description: |-
         Full ONIX files pre-built.
-        TODO: do we response the pre-built file in a JSON format or send the file for the user to download?
+        TODO: should the response be the pre-built file in a JSON format or send the file for the user to download?
       operationId: preBuilt
       produces:
         - application/json
@@ -211,9 +211,9 @@ paths:
         - Bookseller API
       summary: Search by Title or ISBN-13 will return a list of matching full ONIX 3.0 URLs.
       description: |-
-        Allow search by title or a list of ISBN-13. Response the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
+        Allow search by title or a list of ISBN-13. The response is the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
 
-        @TODO  How do we handle missing ISBN-13? - provide in the JSONObject response, at the top, a list of ISBNs that we haven't matched.
+        @TODO  How do we handle missing ISBN-13? - what we can do is provide in the JSONObject response, at the top, a list of ISBNs that we haven't matched.
         @TODO  But why do we want to return all the missing ISBN-13? Return a JSONObject is more complicated than returning a JSONArray.
          
       operationId: searchOnix
@@ -268,7 +268,7 @@ paths:
         TODO - the schema, operation & body names are wrong      
         TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
         TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
-        Create a book seller
+        Create a bookseller
       operationId: requestBookseller
       produces:
         - application/json
@@ -321,7 +321,7 @@ paths:
         TODO - the schema, operation & body names
         TODO - do we use pubID
         TODO - who is going to register the publishers? We might need a create publisher ReST for APA staff, and a update publisher details ReST for either APA staff or logged in publisher. The token API only generate/regenerate the API for this publisher. It can be requested by either APA staff or logged in publisher. We need the publisher details when we create them or update details. But the details are not necessary when we create the token for them.
-        Create a book seller
+        Create a publisher
       operationId: requestPublisher
       produces:
         - application/json
@@ -342,7 +342,7 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-      summary: update a pulisher details
+      summary: update a publisher's details
       description: |-
         TODO - this should be a PUT if updating and the publisher id should be in the path
         Update publisher details.
@@ -369,10 +369,11 @@ paths:
         - APA Administration API
       summary: Generate a bookseller's token
       description: |-
-        Generate a bookseller's token. The previous token will be remove
-          @TODO fix operation id & model name @TODO POST parameters are normally in the body model
-          @TODO this should be the bookseller's token ( different parameters for publisher).
-          @TODO Cat how do we do this for all book stores ?  ---- Need a call  
+        Generate a bookseller's token. The previous token will be removed
+          TODO fix operation id & model name
+          TODO POST parameters are normally in the body model
+          TODO this should be the bookseller's token (different parameters for publisher).
+          TODO Cat how do we do this for all book stores?  ---- Need to discuss
       operationId: generateBooksellerTokenAPA
       produces:
         - application/json
@@ -401,9 +402,10 @@ paths:
       summary: Generate a publisher's token
       description: |-
         Generate a publisher's token. The previous token will be removed
-          @TODO fix operation id & model name @TODO POST parameters are normally in the body model
-          @TODO this should be the publisher's token (different parameters for bookseller).
-          @TODO Cat how do we do this for all publishers?  ---- Need a call  
+          TODO fix operation id & model name
+          TODO POST parameters are normally in the body model
+          TODO this should be the publisher's token (different parameters for bookseller).
+          TODO Cat how do we do this for all publishers?  ---- Need to discuss
       operationId: generatePublisherTokenAPA
       produces:
         - application/json
@@ -458,9 +460,8 @@ paths:
         - Non-Bookseller API
       summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple)
       description: |-
-        Product supply details (inlcuding stock OnHand, OnOrder and CBO)
-        TODO - Parminder can you give Lei/Tina a few simple examples. We need a second endpoint which does only a stock update (return an error if we can't uniquely identify)
-        TODO - Find these simple examples with regex/wc etc (find an ISBN with only one SupplyBlock.)
+        Product supply details (including stock OnHand, OnOrder and CBO)
+        TODO - Parminder - same as for /publisher/stock/{ISBN-13}
       operationId: publsiherSimpleStock
       consumes:
         - application/xml
