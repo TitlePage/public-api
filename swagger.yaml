@@ -149,6 +149,7 @@ paths:
         TODO: Mark the fileName field unique and searchable
         TODO: Add warning message for the critical fields such as filename, criteria, onix version etc.
         TODO: Add a 'updated' field for the last update time of this prebuilt
+        TODO: does publisher need to use the pre-built APIs
         TODO: Parminder, please add the 'filename' field into the search screen of the prebuilt
       operationId: listPreBuilt
       responses:
