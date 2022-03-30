@@ -146,7 +146,7 @@ paths:
         - Bookseller API
       summary: Return a list of active pre-built files available
       description: |- 
-        Return a list of active pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
+        Return a list of active pre-built files available to the logged in bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
         TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paging the list?
         TODO - Mark the fileName field unique and searchable
         TODO - Add warning message for the critical fields such as filename, criteria, onix version etc.
