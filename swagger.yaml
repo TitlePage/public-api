@@ -167,7 +167,7 @@ paths:
       summary: Returns the pre-built ONIX 3.0 file.
       description: |-
         Full ONIX files pre-built.
-        TODO - Warwick Robbie: should the response be the pre-built file in a JSON format or send the file for the user to download?
+        TODO - Warwick/Robbie: should the response be the pre-built file in a JSON format or send the file for the user to download?
       operationId: preBuilt
       produces:
         - application/json
