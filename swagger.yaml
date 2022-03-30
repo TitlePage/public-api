@@ -144,12 +144,11 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Return a list of pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
+      summary: Return a list of active pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
       description: |- 
         TODO: Mark the fileName field unique and searchable
         TODO: Add warning message for the critical fields such as filename, criteria, onix version etc.
-        TODO: Add a 'updated' field for the last update time of this prebuilt
-        TODO: does publisher need to use the pre-built APIs
+        TODO: does publisher need to use the pre-built APIs, if they do, what prebuilt records should we return for the list API?
         TODO: Parminder, please add the 'filename' field into the search screen of the prebuilt
       operationId: listPreBuilt
       responses:
@@ -188,7 +187,9 @@ paths:
       tags:
         - Bookseller API
       summary: Returns to FULL ONIX 3.0 file for the ISBN-13
-      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
+      description: |-
+        Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
+        TODO: please confirm the bookseller should not access this ISBN if it's not authorized to access it. If it's not authorized, this API should redirect to the redacted ONIX file. And a silly question: how do we know if a title is authrozed to a bookseller.
       operationId: fullOnix
       produces:
         - application/json
@@ -1123,6 +1124,15 @@ definitions:
         onixVersion:
           type: string
           example: ONIX_3_0
+        schedules:
+          type: array
+          items:
+            type: string
+            format: date-time
+        _href:
+          type: string
+          format: uri
+          example: /pre-built/Australian-Fishing-Network
   SearchResult:
     type: array
     items:
