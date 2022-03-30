@@ -71,7 +71,7 @@ paths:
   /availability/{ISBN-13}:
     get:
       tags:
-        - Public API
+        - Stage 3
       summary: Find booksellers within the given radius with available stock of the ISBN-13.
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
@@ -272,11 +272,13 @@ paths:
       tags:
         - APA Administration API
       summary: Add a bookseller
-      description: |-
-        TODO - the schema, operation & body names are wrong      
-        TODO - Cat would prefer to use the SAN that is a unique identifier that is already used in TP for some
-        TODO - who is going to register the booksellers? We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
+      description: |- 
+        We'll have a new module (page) in the app.titlepage that will be used by the admin users to select the existing bookseller (of titlepage) and add them to the API database as users. (We will be adding 'latitute' and 'longitude' in Stage 3).
+        
+        
+        TODO - We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
         Add a titlepage bookseller into API database
+        
       operationId: requestBookseller
       produces:
         - application/json
@@ -371,7 +373,7 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /generate-token-bookseller/{SAN}:
+  /generate-token-bookseller/{booksellerID}:
     post:
       tags:
         - APA Administration API
@@ -386,9 +388,9 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: SAN
+        - name: booksellerID
           in: path
-          description: The SAN of the bookseller
+          description: The booksellerID of the bookseller
           type: string
           required: true
         - name: email
@@ -820,61 +822,9 @@ definitions:
   CreateBooksellerRequest:
     type: object
     properties:
-      nationalIDCode:
-        type: string
-        example: AU
-      SAN:
+      userId:
         type: integer
         example: 12345
-      title:
-        type: string
-        example: Mr
-      firstName:
-        type: string
-        example: Joe
-      lastName:
-        type: string
-        example: Public
-      jobFunction:
-        type: string
-        example: Purchasing
-      department:
-        type: string
-        example: Purchasing
-      phone:
-        type: string
-        example: 02 2222 3333
-      email:
-        type: string
-        example: joe@example.com
-      companyName:
-        type: string
-        example: Joe's Bookshop
-      ABN:
-        type: string
-        example: 981000222333
-      streetAddress:
-        type: string
-        example: 1 Main Street
-      suburb:
-        type: string
-        example: Sydney
-      state:
-        type: string
-        example: NSW
-      postcode:
-        type: integer
-        minimum: 1000
-        maximum: 8000
-        example: 2010
-      latitude:
-        type: number
-        minimum: -90
-        maximum: 90
-      longitude:
-        type: number
-        minimum: -90
-        maximum: 90
   CreatePublisherRequest:
     type: object
     properties:
