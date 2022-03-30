@@ -144,8 +144,9 @@ paths:
     get:
       tags:
         - Bookseller API
-      summary: Return a list of active pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
+      summary: Return a list of active pre-built files available
       description: |- 
+        Return a list of active pre-built files available to the current bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
         TODO: Mark the fileName field unique and searchable
         TODO: Add warning message for the critical fields such as filename, criteria, onix version etc.
         TODO: does publisher need to use the pre-built APIs, if they do, what prebuilt records should we return for the list API?
@@ -1124,6 +1125,9 @@ definitions:
         onixVersion:
           type: string
           example: ONIX_3_0
+        lastSheduleRun:
+          type: string
+          format: date-time
         schedules:
           type: array
           items:
