@@ -956,9 +956,7 @@ definitions:
           type: string
           format: date-time
           example: '2022-06-25T14:23:10Z'
-          description: |-
-            TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
-            TODO - This would be a date now ( and where ever called )
+          description: timestamp of the sale
         sold:
           description: the amount sold of this ISBN-13
           type: integer
