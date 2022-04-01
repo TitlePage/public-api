@@ -36,7 +36,8 @@ paths:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
       description: |-
-        Product supply details (including stock OnHand, OnOrder and CBO) TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providinig bvery accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
+        Product supply details (including stock OnHand, OnOrder and CBO)
+        TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providing very accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
         TODO - Parminder - give Lei/Tina a few complex examples. We need a second endpoint that does only a stock update (return an error if we can't uniquely identify it)
         TODO - Parminder - Find these complex examples with regex/wc etc (find an ISBN with the most SupplyBlocks)
       operationId: publsiherStock
@@ -71,7 +72,7 @@ paths:
   /availability/{ISBN-13}:
     get:
       tags:
-        - Stage 3
+        - Public API
       summary: Find booksellers within the given radius with available stock of the ISBN-13.
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
@@ -147,7 +148,7 @@ paths:
       tags:
         - Bookseller API
       summary: Return a list of active pre-built files available
-      description: |- 
+      description: |-
         Return a list of active pre-built files available to the logged in bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
         TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paging the list?
         TODO - Mark the fileName field unique and searchable
@@ -190,8 +191,7 @@ paths:
       tags:
         - Bookseller API
       summary: Returns to FULL ONIX 3.0 file for the ISBN-13
-      description: |-
-        Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
+      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
       operationId: fullOnix
       produces:
         - application/json
@@ -272,13 +272,9 @@ paths:
       tags:
         - APA Administration API
       summary: Add a bookseller
-      description: |- 
-        We'll have a new module (page) in the app.titlepage that will be used by the admin users to select the existing bookseller (of titlepage) and add them to the API database as users. (We will be adding 'latitute' and 'longitude' in Stage 3).
-        
-        
-        TODO - We might need a create bookseller ReST for APA staff, and a update bookseller details ReST for either APA staff or logged in booksellers. The token API only generate/regenerate the API for this bookseller. It can be requested by either APA staff or logged in booksellers. We need the bookseller details when we create them or update details. But the details are not necessary when we create the token for them.
+      description: |-
+        TODO - APA/ABA/POS - discuss how to manage the 'onboarding' of bookstores to use the API and to recieve an API token via email to authorise them
         Add a titlepage bookseller into API database
-        
       operationId: requestBookseller
       produces:
         - application/json
@@ -301,10 +297,8 @@ paths:
         - APA Administration API
       summary: update bookseller details
       description: |-
-        TODO - this should be a PUT if updating and the bookseller id should be in the path
-        TODO - Need to generate tokens for publishers ( under admin ) also
-        TODO - SAN
         Update bookseller details.
+        TODO - Robbie - are there any other details for bookstores that should be added that would be useful for the public browser extension bookstore stock availability, like opening hours?
       operationId: updateBookseller
       produces:
         - application/json
@@ -328,9 +322,6 @@ paths:
         - APA Administration API
       summary: Create a publisher
       description: |-
-        TODO - the schema, operation & body names
-        TODO - do we use pubID
-        TODO - who is going to register the publishers? We might need a create publisher ReST for APA staff, and a update publisher details ReST for either APA staff or logged in publisher. The token API only generate/regenerate the API for this publisher. It can be requested by either APA staff or logged in publisher. We need the publisher details when we create them or update details. But the details are not necessary when we create the token for them.
         Create a publisher
       operationId: requestPublisher
       produces:
@@ -354,7 +345,6 @@ paths:
         - Non-Bookseller API
       summary: update a publisher's details
       description: |-
-        TODO - this should be a PUT if updating and the publisher id should be in the path
         Update publisher details.
       operationId: updatePublisher
       produces:
@@ -380,10 +370,6 @@ paths:
       summary: Generate a bookseller's token
       description: |-
         Generate a bookseller's token. The previous token will be removed
-          TODO fix operation id & model name
-          TODO POST parameters are normally in the body model
-          TODO this should be the bookseller's token (different parameters for publisher).
-          TODO Cat how do we do this for all book stores?  ---- Need to discuss
       operationId: generateBooksellerTokenAPA
       produces:
         - application/json
@@ -412,10 +398,6 @@ paths:
       summary: Generate a publisher's token
       description: |-
         Generate a publisher's token. The previous token will be removed
-          TODO fix operation id & model name
-          TODO POST parameters are normally in the body model
-          TODO this should be the publisher's token (different parameters for bookseller).
-          TODO Cat how do we do this for all publishers?  ---- Need to discuss
       operationId: generatePublisherTokenAPA
       produces:
         - application/json
@@ -443,12 +425,9 @@ paths:
         - Bookseller API
       summary: Update stock levels & sales of a series of ISBN-13.
       description: |-
-        The ISBN-13/timestamp will be used to de-duplicate sales/stock levels
-         TODO - Parminder please grab a complex block 6, and we will discuss the rules to uniquely identify the stock to be updated.
-         TODO - stage 1 sales - a daily running total of sales that could be sent multiple times a day or once a day in a batch
-         TODO - also want the average selling price and the currency code
-         TODO - Stage 1 stocks - only want the current in-stock/available, on-order, committed back-order
-      operationId: batchStock
+        Each post will include the sale amount and a running sales total for the day for the title
+        TODO - stDevTeam - The ISBN-13/timestamp was going to be used to de-duplicate sales but need to discuss if we use running sales total instead?
+      operationId: batchSale
       produces:
         - application/json
       parameters:
@@ -464,14 +443,41 @@ paths:
           description: Invalid Sale
       security:
         - api_key: []
+  /stock:
+    post:
+      tags:
+        - Bookseller API
+      summary: Update stock levels & sales of a series of ISBN-13.
+      description: |-
+        The ISBN-13/timestamp will be used to de-duplicate stock levels
+         TODO - Parminder please grab a complex block 6, and we will discuss the rules to uniquely identify the stock to be updated.
+      operationId: batchStock
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Stock data
+          required: true
+          schema:
+            $ref: '#/definitions/Stock'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Sale
+      security:
+        - api_key: []
   /publisher/simple-stock/{ISBN-13}:
     put:
       tags:
         - Non-Bookseller API
       summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple)
       description: |-
-        Product supply details (including stock OnHand, OnOrder and CBO)
-        TODO - Parminder - same as for /publisher/stock/{ISBN-13}
+        Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
+        TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providing very accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
+        TODO - Parminder - give Lei/Tina a few simple examples. We need a second endpoint that does only a stock update (return an error if we can't uniquely identify it)
+        TODO - Parminder - Find these simple examples with regex/wc etc (find an ISBN with the most SupplyBlocks)
+        TODO - stDevTeam - change the body definition once we know what a simple stock update would include, instead of a full block6
       operationId: publsiherSimpleStock
       consumes:
         - application/xml
@@ -501,24 +507,6 @@ paths:
           description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
-  /browser-extension:
-    get:
-      tags:
-        - Stage 3
-      summary: Public API browser extension to see basic bibliographic data for ISBN-13
-      description: |-
-        Browser extension similar to Biblio-matic - will be a Stage 3 Public API
-         @TODO - Paramters
-         @TODO - Produces
-         @TODO - operationId
-         @TODO - need a response for when the ISBN-13 isn't in the TP database (see Biblio-matic extsions response)
-         @TODO - Tina.. This should be covered by the /onix and the /availablity APIs, yes we will need to create a browser extension which calls these endpoints.
-      operationId: TODO
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid Request
   /bookseller-25hours-no-updates/{SAN}:
     post:
       tags:
@@ -526,10 +514,6 @@ paths:
       summary: Automatic notifications when a bookseller hasn't sent a sales/stock update for 25 hours.
       description: |-
         Send email to bookseller if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
-         @TODO - Paramters
-         @TODO - Produces
-         @TODO - operationId
-         @TODO - need a response for when the ISBN-13 isn't in the TP database (see Biblio-matic extsions response)
       operationId: notificationBookseller25hoursNoUpdates
       produces:
         - application/json
@@ -557,7 +541,7 @@ paths:
         - Stage 2
       summary: Send a Pacstream type ecommerce order directly to a Publisher.
       description: |-
-        The bookseller can send a Pacstream type order from their POS to the Publisher via TP's API - not needing to send an invoice at this stage but need to know if the API needs to send order updates from the publisher/distributer
+        The bookseller can send a Pacstream type order from their POS to the Publisher via TP's API - need to know if the API needs to send an invoice or order updates from the publisher/distributer
           @TODO - discuss with team what to send and we need to receive back a PO acknowledgement from the publisher and send that to the bookseller
       responses:
         '200':
@@ -828,67 +812,18 @@ definitions:
   CreatePublisherRequest:
     type: object
     properties:
-      nationalIDCode:
-        type: string
-        example: AU
-      SAN:
+      pubId:
         type: integer
         example: 12345
-      title:
-        type: string
-        example: Mr
-      firstName:
-        type: string
-        example: Joe
-      lastName:
-        type: string
-        example: Public
-      jobFunction:
-        type: string
-        example: Purchasing
-      department:
-        type: string
-        example: Purchasing
-      phone:
-        type: string
-        example: 02 2222 3333
-      email:
-        type: string
-        example: joe@example.com
-      companyName:
-        type: string
-        example: Joe's Publishing
-      ABN:
-        type: string
-        example: 981000222333
-      streetAddress:
-        type: string
-        example: 1 Main Street
-      suburb:
-        type: string
-        example: Sydney
-      state:
-        type: string
-        example: NSW
-      postcode:
-        type: integer
-        minimum: 1000
-        maximum: 8000
-        example: 2010
-      latitude:
-        type: number
-        minimum: -90
-        maximum: 90
-      longitude:
-        type: number
-        minimum: -90
-        maximum: 90
   UpdateBooksellerRequest:
     type: object
     properties:
       nationalIDCode:
         type: string
         example: AU
+      SAN:
+        type: integer
+        example: 29138
       title:
         type: string
         example: Mr
@@ -985,14 +920,6 @@ definitions:
         minimum: 1000
         maximum: 8000
         example: 2010
-      latitude:
-        type: number
-        minimum: -90
-        maximum: 90
-      longitude:
-        type: number
-        minimum: -90
-        maximum: 90
   Location:
     description: Location of the bookstore with stock
     type: array
@@ -1013,7 +940,7 @@ definitions:
           example: https://books.example.com
   Sale:
     description: |-
-      Deduplicate the sales/stock data by use of the timestamp.
+      Deduplicate the sales data by use of the timestamp.
       The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
     type: array
     items:
@@ -1031,26 +958,39 @@ definitions:
             TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
             TODO - This would be a date now ( and where ever called )
         sold:
+          description: the amount sold of this ISBN-13
           type: integer
           format: int64
           minimum: 0
-        refunded:
-          description: The book was returned/refunded by the client TODO - remove
+        averageSellingPrice:
+          description: the average sold price for this ISBN-13
           type: integer
           format: int64
           minimum: 0
-        returned:
-          description: The book was returned to the distributor/publisher  TODO - remove
+        CurrencyCode:
+          type: string
+          example: AUD
+  Stock:
+    description: |-
+      Deduplicate the stock data by use of the timestamp.
+      The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
           type: integer
           format: int64
-          minimum: 0
-        restocked:
-          description: The number of books restocked from the distributor/publisher.  TODO - remove
-          type: integer
-          format: int64
-          minimum: 0
-        shrinkage:
-          description: Reduction in the number of books due to wastage or theft.  TODO - remove
+          example: 9780000000001
+        timestamp:
+          type: string
+          format: date-time
+          example: '2022-06-25T14:23:10Z'
+          description: |-
+            TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
+            TODO - This would be a date now ( and where ever called )
+        on-order:
+          description: The on-order number
           type: integer
           format: int64
           minimum: 0
