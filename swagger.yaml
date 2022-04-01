@@ -966,6 +966,11 @@ definitions:
           format: int64
           minimum: 0
           example: 16
+        invoiceId:
+          description: invoice id of this sale
+          type: integer
+          format: int64
+          example: 98337874854
         averageSellingPrice:
           description: the average sold price for this ISBN-13
           type: number
