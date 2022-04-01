@@ -36,10 +36,7 @@ paths:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
       description: |-
-        Product supply details (including stock OnHand, OnOrder and CBO)
-        TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providing very accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
-        TODO - Parminder - give Lei/Tina a few complex examples. We need a second endpoint that does only a stock update (return an error if we can't uniquely identify it)
-        TODO - Parminder - Find these complex examples with regex/wc etc (find an ISBN with the most SupplyBlocks)
+        Product supply details (Block 6 update)
       operationId: publsiherStock
       consumes:
         - application/xml
