@@ -265,7 +265,7 @@ paths:
     post:
       tags:
         - APA Administration API
-      summary: Add a bookstore
+      summary: Add a bookstore into API database
       description: |-
         TODO - APA/ABA/POS - discuss how to manage the 'onboarding' of bookstores to use the API and to recieve an API token via email to authorise them
         Add a titlepage bookstore into API database
@@ -314,9 +314,9 @@ paths:
     post:
       tags:
         - APA Administration API
-      summary: Create a publisher
+      summary: Add a publisher into API database
       description: |-
-        Create a publisher
+        Add a titlepage publisher into API database
       operationId: requestPublisher
       produces:
         - application/json
