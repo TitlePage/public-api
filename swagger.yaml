@@ -484,7 +484,7 @@ paths:
           maximum: 9790000000000
         - in: body
           name: productSupply
-          description: The ONIX 3.0 Block 6, TODO, took away the full block 6 array, it will be a simple update
+          description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
           required: true
           schema:
             $ref: '#/definitions/PublisherSimpleStock'
