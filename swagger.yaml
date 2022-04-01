@@ -262,30 +262,6 @@ paths:
         '400':
           description: Invalid Request
   /bookstore:
-    post:
-      tags:
-        - APA Administration API
-      summary: Add a bookstore into API database
-      description: |-
-        TODO - APA/ABA/POS - discuss how to manage the 'onboarding' of bookstores to use the API and to recieve an API token via email to authorise them
-        Add a titlepage bookstore into API database
-      operationId: requestBookstore
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: createBookstoreRequest
-          description: Create a bookerseller
-          required: true
-          schema:
-            $ref: '#/definitions/CreateBookstoreRequest'
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid Request
-      security:
-        - api_key: []
     put:
       tags:
         - Bookstore API
@@ -311,29 +287,6 @@ paths:
       security:
         - api_key: []
   /publisher:
-    post:
-      tags:
-        - APA Administration API
-      summary: Add a publisher into API database
-      description: |-
-        Add a titlepage publisher into API database
-      operationId: requestPublisher
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: createPublisherRequest
-          description: Create a publisher
-          required: true
-          schema:
-            $ref: '#/definitions/CreatePublisherRequest'
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid Request
-      security:
-        - api_key: []
     put:
       tags:
         - Non-Bookseller API
