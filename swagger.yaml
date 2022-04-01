@@ -468,10 +468,6 @@ paths:
       summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple)
       description: |-
         Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
-        TODO - think about adjusting the Loader reports so that a block/partial update only sends a loader report about the blocks that were updated - this will prevent huge numbers of error reports being generated from stock updates to ISBNs that are missing an element from blocks 1-5 - this would also be a solution for a Distributor who is providing very accurate Block 6 partial updates and is receiving back error emails for missing elements in blocks 1-5 which they haven't loaded and never will load
-        TODO - Parminder - give Lei/Tina a few simple examples. We need a second endpoint that does only a stock update (return an error if we can't uniquely identify it)
-        TODO - Parminder - Find these simple examples with regex/wc etc (find an ISBN with the most SupplyBlocks)
-        TODO - stDevTeam - change the body definition once we know what a simple stock update would include, instead of a full block6
       operationId: publsiherSimpleStock
       consumes:
         - application/xml
@@ -665,105 +661,8 @@ definitions:
     xml:
       name: ProductSupply
     properties:
-      Market:
+      ToBoDecided:
         type: object
-        properties:
-          Territory:
-            type: object
-            properties:
-              CountriesIncluded:
-                type: string
-                example: AU
-      SupplyDetail:
-        type: object
-        properties:
-          Supplier:
-            type: object
-            properties:
-              SupplierRole:
-                type: integer
-                example: '00'
-              SupplierIdentifier:
-                type: object
-                properties:
-                  SupplierIDType:
-                    type: number
-                    example: 7
-                  IDValue:
-                    type: number
-                    example: 9021000
-              SupplierName:
-                type: string
-                example: XYZ Distribution Services
-              TelephoneNumber:
-                type: string
-                example: +61 2 2000 2000
-              FaxNumber:
-                type: string
-                example: +61 2 2000 2000
-              EmailAddress:
-                type: string
-                example: email@exmaple.com
-          ProductAvailability:
-            type: number
-            example: 10
-          SupplyDate:
-            type: object
-            properties:
-              SupplyDateRole:
-                type: number
-                example: 2
-              Date:
-                type: string
-                format: date
-                example: 20220501
-                properties:
-                  dateformat:
-                    type: number
-                    example: '00'
-                    xml:
-                      attribute: true
-          Stock:
-            type: object
-            properties:
-              OnHand:
-                type: integer
-                minimum: 0
-                example: 25
-              OnOrder:
-                type: integer
-                minimum: 0
-                example: 44
-          Price:
-            type: object
-            properties:
-              PriceType:
-                type: number
-                example: '02'
-              PriceAmount:
-                type: number
-                example: 22.99
-              Tax:
-                type: object
-                properties:
-                  TaxType:
-                    type: number
-                    example: 1
-                  TaxRateCode:
-                    type: string
-                    example: S
-                  TaxRatePercent:
-                    type: number
-                    example: 15
-                  TaxableAmount:
-                    type: number
-                    example: 19.99
-                  TaxAmount:
-                    type: number
-                    example: 3
-              CurrencyCode:
-                type: string
-                example: AUD
   TokenRequest:
     type: object
     properties:
