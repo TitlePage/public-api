@@ -17,8 +17,8 @@ tags:
     externalDocs:
       description: Find out more
       url: https://titlepage.com.au
-  - name: Bookseller API
-    description: Authorized bookseller APIs
+  - name: Bookstore API
+    description: Authorized bookstore APIs
   - name: Non-Bookseller API
     description: Authorized publisher APIs
   - name: APA Administration API
@@ -70,7 +70,7 @@ paths:
     get:
       tags:
         - Public API
-      summary: Find booksellers within the given radius with available stock of the ISBN-13.
+      summary: Find bookstores within the given radius with available stock of the ISBN-13.
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
          Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
@@ -143,15 +143,15 @@ paths:
   /list/pre-built:
     get:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Return a list of active pre-built files available
       description: |-
-        Return a list of active pre-built unique file names available to the logged in bookseller, which will include all booksellers and this bookseller's own custom pre-builts.
+        Return a list of active pre-built unique file names available to the logged in bookstore, which will include all bookstores and this bookstore's own custom pre-builts.
         TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paging the list?
       operationId: listPreBuilt
       responses:
         '200':
-          description: A list of pre-built files that are available to all booksellers, and their own custom pre-built files.
+          description: A list of pre-built files that are available to all bookstores, and their own custom pre-built files.
           schema:
             $ref: '#/definitions/ListPreBuilt'
       security:
@@ -159,7 +159,7 @@ paths:
   /pre-built/{NAME}:
     get:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Returns the pre-built ONIX 3.0 file.
       description: |-
         Full ONIX files pre-built.
@@ -183,7 +183,7 @@ paths:
   /onix-full/{ISBN-13}:
     get:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Returns to FULL ONIX 3.0 file for the ISBN-13
       description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
       operationId: fullOnix
@@ -210,7 +210,7 @@ paths:
   /search:
     get:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Search by Title or ISBN-13 will return a list of matching full ONIX 3.0 URLs.
       description: |-
         Allow search by title or a list of ISBN-13. The response is the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
@@ -261,24 +261,24 @@ paths:
           description: successful operation
         '400':
           description: Invalid Request
-  /bookseller:
+  /bookstore:
     post:
       tags:
         - APA Administration API
-      summary: Add a bookseller
+      summary: Add a bookstore
       description: |-
         TODO - APA/ABA/POS - discuss how to manage the 'onboarding' of bookstores to use the API and to recieve an API token via email to authorise them
-        Add a titlepage bookseller into API database
-      operationId: requestBookseller
+        Add a titlepage bookstore into API database
+      operationId: requestBookstore
       produces:
         - application/json
       parameters:
         - in: body
-          name: createBooksellerRequest
+          name: createBookstoreRequest
           description: Create a bookerseller
           required: true
           schema:
-            $ref: '#/definitions/CreateBooksellerRequest'
+            $ref: '#/definitions/CreateBookstoreRequest'
       responses:
         '200':
           description: successful operation
@@ -288,21 +288,21 @@ paths:
         - api_key: []
     put:
       tags:
-        - APA Administration API
-      summary: update bookseller details
+        - Bookstore API
+      summary: update bookstore details
       description: |-
-        Update bookseller details.
+        Update Bookstore details.
         TODO - Robbie - are there any other details for bookstores that should be added that would be useful for the public browser extension bookstore stock availability, like opening hours?
-      operationId: updateBookseller
+      operationId: updateBookstore
       produces:
         - application/json
       parameters:
         - in: body
-          name: updateBooksellerRequest
-          description: Update bookseller
+          name: updateBookstoreRequest
+          description: Update Bookstore
           required: true
           schema:
-            $ref: '#/definitions/UpdateBooksellerRequest'
+            $ref: '#/definitions/UpdateBookstoreRequest'
       responses:
         '200':
           description: successful operation
@@ -357,25 +357,25 @@ paths:
           description: Invalid Request
       security:
         - api_key: []
-  /generate-token-bookseller/{booksellerID}:
+  /generate-token-bookstore/{bookstoreID}:
     post:
       tags:
         - APA Administration API
-      summary: Generate a bookseller's token
+      summary: Generate a bookstore's token
       description: |-
-        Generate a bookseller's token. The previous token will be removed
-      operationId: generateBooksellerTokenAPA
+        Generate a bookstore's token. The previous token will be removed
+      operationId: generateBookstoreTokenAPA
       produces:
         - application/json
       parameters:
-        - name: booksellerID
+        - name: bookstoreID
           in: path
-          description: The booksellerID of the bookseller
+          description: The bookstoreID of the bookstore
           type: string
           required: true
         - name: email
           in: query
-          description: The email of the bookseller to accept the token
+          description: The email of the bookstore to accept the token
           type: string
           required: true
       responses:
@@ -416,12 +416,12 @@ paths:
   /sale:
     post:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Update sales of a series of ISBN-13.
       description: |-
         Each post will include the sale amount and a running sales total for the day for the title
         The ISBN-13/invoice id are going to be used to de-duplicate sales
-        TODO - Warwick/Robbie: can booksellers pass the invoice id of a sale? Can we use it to de-duplicate sales?
+        TODO - Warwick/Robbie: can bookstores pass the invoice id of a sale? Can we use it to de-duplicate sales?
       operationId: batchSale
       produces:
         - application/json
@@ -441,7 +441,7 @@ paths:
   /stock:
     post:
       tags:
-        - Bookseller API
+        - Bookstore API
       summary: Update stock levels of a series of ISBN-13.
       description: |-
         The ISBN-13/timestamp will be used to de-duplicate stock levels
@@ -501,25 +501,25 @@ paths:
           description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
-  /bookseller-25hours-no-updates/{SAN}:
+  /bookstore-25hours-no-updates/{SAN}:
     post:
       tags:
         - Stage 3
-      summary: Automatic notifications when a bookseller hasn't sent a sales/stock update for 25 hours.
+      summary: Automatic notifications when a bookstore hasn't sent a sales/stock update for 25 hours.
       description: |-
-        Send email to bookseller if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
-      operationId: notificationBookseller25hoursNoUpdates
+        Send email to bookstore if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
+      operationId: notificationBookstore25hoursNoUpdates
       produces:
         - application/json
       parameters:
         - name: SAN
           in: path
-          description: The SAN of the bookseller
+          description: The SAN of the bookstore
           type: string
           required: true
         - name: email
           in: query
-          description: The email of the bookseller to receive the notification
+          description: The email of the bookstore to receive the notification
           type: string
           required: true
       responses:
@@ -535,8 +535,8 @@ paths:
         - Stage 2
       summary: Send a Pacstream type ecommerce order directly to a Publisher.
       description: |-
-        The bookseller can send a Pacstream type order from their POS to the Publisher via TP's API - need to know if the API needs to send an invoice or order updates from the publisher/distributer
-          @TODO - discuss with team what to send and we need to receive back a PO acknowledgement from the publisher and send that to the bookseller
+        The bookstore can send a Pacstream type order from their POS to the Publisher via TP's API - need to know if the API needs to send an invoice or order updates from the publisher/distributer
+          @TODO - discuss with team what to send and we need to receive back a PO acknowledgement from the publisher and send that to the bookstore
       responses:
         '200':
           description: Order is sent successfully
@@ -797,7 +797,7 @@ definitions:
         type: boolean
       requireShopify:
         type: boolean
-  CreateBooksellerRequest:
+  CreateBookstoreRequest:
     type: object
     properties:
       userId:
@@ -809,15 +809,15 @@ definitions:
       pubId:
         type: integer
         example: 12345
-  UpdateBooksellerRequest:
+  UpdateBookstoreRequest:
     type: object
     properties:
-      nationalIDCode:
-        type: string
-        example: AU
       SAN:
         type: integer
         example: 29138
+      nationalIDCode:
+        type: string
+        example: AU
       title:
         type: string
         example: Mr
