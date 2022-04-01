@@ -465,7 +465,7 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-      summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple)
+      summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple). Must supply valid Block 6 with minimum information required.  
       description: |-
         Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
       operationId: publsiherSimpleStock
