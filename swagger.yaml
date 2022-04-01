@@ -420,10 +420,11 @@ paths:
     post:
       tags:
         - Bookseller API
-      summary: Update stock levels & sales of a series of ISBN-13.
+      summary: Update sales of a series of ISBN-13.
       description: |-
         Each post will include the sale amount and a running sales total for the day for the title
-        TODO - stDevTeam - The ISBN-13/timestamp was going to be used to de-duplicate sales but need to discuss if we use running sales total instead?
+        The ISBN-13/invoice id are going to be used to de-duplicate sales
+        TODO - Warwick/Robbie: can booksellers pass the invoice id of a sale? Can we use it to de-duplicate sales?
       operationId: batchSale
       produces:
         - application/json
@@ -444,10 +445,9 @@ paths:
     post:
       tags:
         - Bookseller API
-      summary: Update stock levels & sales of a series of ISBN-13.
+      summary: Update stock levels of a series of ISBN-13.
       description: |-
         The ISBN-13/timestamp will be used to de-duplicate stock levels
-         TODO - Parminder please grab a complex block 6, and we will discuss the rules to uniquely identify the stock to be updated.
       operationId: batchStock
       produces:
         - application/json
@@ -959,11 +959,19 @@ definitions:
           type: integer
           format: int64
           minimum: 0
-        averageSellingPrice:
-          description: the average sold price for this ISBN-13
+          example: 1
+        runningSalesTotal:
+          description: the running sales total of this ISBN-13 on this day
           type: integer
           format: int64
           minimum: 0
+          example: 16
+        averageSellingPrice:
+          description: the average sold price for this ISBN-13
+          type: number
+          format: float
+          minimum: 0
+          example: 19.95
         CurrencyCode:
           type: string
           example: AUD
