@@ -13,14 +13,14 @@ host: api.titlepage.com.au
 basePath: /v1
 tags:
   - name: Public API
-    description: Publically callable ( no autentication ) APIs
+    description: Publically callable ( no authentication ) APIs
     externalDocs:
       description: Find out more
       url: https://titlepage.com.au
   - name: Bookstore API
-    description: Authorized bookstore APIs
+    description: Authorised bookstore APIs
   - name: Non-Bookseller API
-    description: Authorized publisher APIs
+    description: Authorised publisher APIs
   - name: APA Administration API
     description: APA administration API
   - name: Stage 2
@@ -35,9 +35,8 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
-      description: |-
-        Product supply details (Block 6 update)
-      operationId: publsiherStock
+      description: Product supply details (Block 6 update)
+      operationId: publisherStock
       consumes:
         - application/xml
       produces:
@@ -83,7 +82,7 @@ paths:
       parameters:
         - name: ISBN-13
           in: path
-          description: ISBN-13 of the title check the avalibilty
+          description: ISBN-13 of the title check the availability
           required: true
           type: integer
           format: int64
@@ -100,7 +99,7 @@ paths:
           minimum: -90
           maximum: 90
         - name: radius
-          description: The number of killometers from the client to the book store ( as the crow flies)
+          description: The number of kilometers from the client to the book store ( as the crow flies)
           in: query
           type: integer
           minimum: 1
@@ -119,7 +118,7 @@ paths:
     get:
       tags:
         - Public API
-      summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13
+      summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13 without sensitive stock information
       description: Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
       operationId: publicOnix
       produces:
@@ -147,7 +146,7 @@ paths:
       summary: Return a list of active pre-built files available
       description: |-
         Return a list of active pre-built unique file names available to the logged in bookstore, which will include all bookstores and this bookstore's own custom pre-builts.
-        TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paging the list?
+        TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paginate the list?
       operationId: listPreBuilt
       responses:
         '200':
@@ -215,7 +214,7 @@ paths:
       description: |-
         Allow search by title or a list of ISBN-13. The response is the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
 
-        @TODO Warwick/Robbie: Do you want to return a list of all the missing ISBN-13 in the response? Or it's unnecessary?
+        @TODO Warwick/Robbie: Do you want to return a list of all the missing ISBN-13 in the response? Or is it unnecessary?
 
          
       operationId: searchOnix
@@ -268,7 +267,7 @@ paths:
       summary: update bookstore details
       description: |-
         Update Bookstore details.
-        TODO - Robbie - are there any other details for bookstores that should be added that would be useful for the public browser extension bookstore stock availability, like opening hours?
+        TODO - Robbie/Warwick - are there any other details for bookstores that should be added that would be useful for the public browser extension bookstore stock availability, like opening hours? What is the best ID to use for bookstores? 
       operationId: updateBookstore
       produces:
         - application/json
@@ -291,8 +290,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: update a publisher's details
-      description: |-
-        Update publisher details.
+      description: Update publisher details.
       operationId: updatePublisher
       produces:
         - application/json
@@ -315,8 +313,7 @@ paths:
       tags:
         - APA Administration API
       summary: Generate a bookstore's token
-      description: |-
-        Generate a bookstore's token. The previous token will be removed
+      description: Generate a bookstore's token. The previous token will be removed.
       operationId: generateBookstoreTokenAPA
       produces:
         - application/json
@@ -343,8 +340,7 @@ paths:
       tags:
         - APA Administration API
       summary: Generate a publisher's token
-      description: |-
-        Generate a publisher's token. The previous token will be removed
+      description: Generate a publisher's token. The previous token will be removed.
       operationId: generatePublisherTokenAPA
       produces:
         - application/json
@@ -372,7 +368,7 @@ paths:
         - Bookstore API
       summary: Update sales of a series of ISBN-13.
       description: |-
-        Each post will include the sale amount and a running sales total for the day for the title
+        Each post will include the sale amount and a running daily sales total for the title
         The ISBN-13/invoice id are going to be used to de-duplicate sales
         TODO - Warwick/Robbie: can bookstores pass the invoice id of a sale? Can we use it to de-duplicate sales?
       operationId: batchSale
@@ -396,8 +392,7 @@ paths:
       tags:
         - Bookstore API
       summary: Update stock levels of a series of ISBN-13.
-      description: |-
-        The ISBN-13/timestamp will be used to de-duplicate stock levels
+      description: The ISBN-13/timestamp will be used to de-duplicate stock levels
       operationId: batchStock
       produces:
         - application/json
@@ -419,8 +414,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple).
-      description: |-
-        Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required.
+      description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required.
       operationId: publsiherSimpleStock
       consumes:
         - application/xml
@@ -455,8 +449,7 @@ paths:
       tags:
         - Stage 3
       summary: Automatic notifications when a bookstore hasn't sent a sales/stock update for 25 hours.
-      description: |-
-        Send email to bookstore if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
+      description: Send email to bookstore if they haven't updated sales/stock in past 25 hours - will be a Stage 3 Public API
       operationId: notificationBookstore25hoursNoUpdates
       produces:
         - application/json
