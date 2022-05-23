@@ -366,7 +366,7 @@ paths:
       summary: Update sales of a series of ISBN-13.
       description: |-
         Each post will include the ISBN-13 and invoice id, the sale amount and a running daily sales total for the title - Assuming for POS/bookstores pass invoice id is the correct sale identifier and can be included?
-        Online batch, Offline/file upload, is a daily complete reload file upload and timestamp, if we miss a day then the timestamp will ensure the data we do have is true according to the last update/timestamp - this will update (recover) missing stock data but won't recover missed sales data,  if we get a file duplicate we ignore it.
+        Online batch is a daily complete reload file upload and timestamp, if we miss a day then the timestamp will ensure the data we do have is true according to the last update/timestamp - this will update (recover) missing stock data but won't recover missed sales data,  if we get a file duplicate we ignore it.
       operationId: batchSale
       produces:
         - application/json
