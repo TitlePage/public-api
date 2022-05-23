@@ -73,9 +73,8 @@ paths:
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
          Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
-         TODO - Robbie - This could be modified to give values such as, Low Stock or In Stock, or traffic lights
-         What would bookstores prefer?
-         What store info would bookstores want? We have basic info, would they want their open hours added?
+          Available stock levels will be returned for "Low Stock" or "In Stock"
+          POS/bookstores opinions are sought on determining "Low Stock" or "In Stock" values.
       operationId: findISBN
       produces:
         - application/json
@@ -99,7 +98,7 @@ paths:
           minimum: -90
           maximum: 90
         - name: radius
-          description: The number of kilometers from the client to the book store ( as the crow flies)
+          description: The number of kilometers from the client to the book store (as the crow flies)
           in: query
           type: integer
           minimum: 1
@@ -146,7 +145,7 @@ paths:
       summary: Return a list of active pre-built files available
       description: |-
         Return a list of active pre-built unique file names available to the logged in bookstore, which will include all bookstores and this bookstore's own custom pre-builts.
-        TODO - Warwick/Robbie: Do we need filter for the list? Do we also need to paginate the list?
+        Would POS/bookstores want the List to  be paginated?
       operationId: listPreBuilt
       responses:
         '200':
@@ -159,10 +158,10 @@ paths:
     get:
       tags:
         - Bookstore API
-      summary: Returns the pre-built ONIX 3.0 file.
+      summary: Returns a list of ISBN-13 based on the "pre-built" criteria.
       description: |-
-        Full ONIX files pre-built.
-        TODO - Warwick/Robbie: should the response be the pre-built file in a JSON format or send the file for the user to download?
+        The full ONIX files for the chosen pre-built e.g. TP Custom Pre-Built Files get the the custom pre-built, 'Graphic Novels'
+        POS/bookstores, re: the response, the pre-built file could be in a JSON format or we can send the file for the user to download, what is preferred?
       operationId: preBuilt
       produces:
         - application/json
@@ -214,9 +213,7 @@ paths:
       description: |-
         Allow search by title or a list of ISBN-13. The response is the matching ISBN-13 list. Maximum of 1000 matching ISBN-13
 
-        @TODO Warwick/Robbie: Do you want to return a list of all the missing ISBN-13 in the response? Or is it unnecessary?
-
-         
+        POS/bookstores we could return a list of all the missing ISBN-13 in the response, is this useful to you?
       operationId: searchOnix
       produces:
         - application/json
@@ -267,7 +264,7 @@ paths:
       summary: update bookstore details
       description: |-
         Update Bookstore details.
-        TODO - Robbie/Warwick - are there any other details for bookstores that should be added that would be useful for the public browser extension bookstore stock availability, like opening hours? What is the best ID to use for bookstores? 
+        POS/bookstores are there any other details for bookstores that would be useful like opening hours? What is the best ID to use for bookstores?
       operationId: updateBookstore
       produces:
         - application/json
@@ -368,9 +365,8 @@ paths:
         - Bookstore API
       summary: Update sales of a series of ISBN-13.
       description: |-
-        Each post will include the sale amount and a running daily sales total for the title
-        The ISBN-13/invoice id are going to be used to de-duplicate sales
-        TODO - Warwick/Robbie: can bookstores pass the invoice id of a sale? Can we use it to de-duplicate sales?
+        Each post will include the ISBN-13 and invoice id, the sale amount and a running daily sales total for the title - Assuming for POS/bookstores pass invoice id is the correct sale identifier and can be included?
+        Online batch, Offline/file upload, is a daily complete reload file upload and timestamp, if we miss a day then the timestamp will ensure the data we do have is true according to the last update/timestamp - this will update (recover) missing stock data but won't recover missed sales data,  if we get a file duplicate we ignore it.
       operationId: batchSale
       produces:
         - application/json
@@ -768,6 +764,9 @@ definitions:
         bookstore:
           type: string
           example: Books Are Us
+        stock:
+          type: string
+          example: In stock
         address:
           type: string
           example: 1 Main Street, Sydney, NSW
