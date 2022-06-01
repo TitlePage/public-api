@@ -118,7 +118,13 @@ paths:
       tags:
         - Public API
       summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13 without sensitive stock information
-      description: Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy.
+      description: |-
+        Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy. If there are more than one title matches this ISBN-13, the primiary one will be returned. The logic to find the primary record is:
+        - If there are multiple records, and (only) one is Publishing Availability Status 04 - Active, treat that as the primary record
+        - If there are multiple records, and more than one is Publishing Availability Status 04 - Active, treat the most recently modified/scanned record with Publishing Availability Status 04 - Active as the primary record
+        - If there are multiple records, none with Publishing Availability Status 04 - Active, treat the most recently modified/scanned record with Publishing Availability Status 02 - Forthcoming (if any) as the primary record, 
+        - In all other cases, treat the most recently modified/scanned record as the primary record
+
       operationId: publicOnix
       produces:
         - application/json
@@ -851,6 +857,9 @@ definitions:
           type: integer
           format: int64
           minimum: 0
+        product-url:
+          type: string
+          example: https://www.bookstore.com/product/9780000000001
   ListPreBuilt:
     type: array
     items:
