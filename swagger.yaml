@@ -69,8 +69,8 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-      summary: Batch updating the stock & availability of maximum 1000 ISBN-13 for a publisher (Block 6 update)
-      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles in one request
+      summary: Batch updating the stock & availability of maximum 1000 titles for a publisher (Block 6 update)
+      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles per request
       operationId: publisherStockBatch
       consumes:
         - application/xml
@@ -473,6 +473,33 @@ paths:
           description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
+  /publisher/simple-stock:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Publisher batch update of stock & availability for maximum 1000 titles with a single supplier (simple).
+      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request.
+      operationId: publsiherSimpleStockBatch
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: productSupply
+          description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherSimpleStockBatch'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied (validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
   /bookstore-25hours-no-updates/{SAN}:
     post:
       tags:
@@ -754,6 +781,19 @@ definitions:
     properties:
       ToBoDecided:
         type: object
+  PublisherSimpleStockBatch:
+    description: |-
+      Simple stock update to one supplier per country per ISBN-13
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: Products
+    properties:
+      Product:
+        type: object
+        properties:
+          ToBoDecided:
+            type: object
   TokenRequest:
     type: object
     properties:
