@@ -65,6 +65,33 @@ paths:
           description: ISBN-13 not found for this publisher.
       security:
         - api_key: []
+  /publisher/stock:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Batch updating the stock & availability of maximum 1000 ISBN-13 for a publisher (Block 6 update)
+      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles in one request
+      operationId: publisherStockBatch
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: productSupply
+          description: The ONIX 3.0 Block 6
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherStockBatch'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied ( validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
   /availability/{ISBN-13}:
     get:
       tags:
@@ -601,6 +628,122 @@ definitions:
               CurrencyCode:
                 type: string
                 example: AUD
+  PublisherStockBatch:
+    description: |-
+      Multiple Block 6 for Multiple Title
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: Products
+    properties:
+      Product:
+        type: object
+        properties:
+          RecordReference:
+            type: string
+            example: 102-9780415671897
+          ProductSupply:
+            type: object
+            properties:
+              Market:
+                type: object
+                properties:
+                  Territory:
+                    type: object
+                    properties:
+                      CountriesIncluded:
+                        type: string
+                        example: AU
+              SupplyDetail:
+                type: object
+                properties:
+                  Supplier:
+                    type: object
+                    properties:
+                      SupplierRole:
+                        type: integer
+                        example: '00'
+                      SupplierIdentifier:
+                        type: object
+                        properties:
+                          SupplierIDType:
+                            type: number
+                            example: 7
+                          IDValue:
+                            type: number
+                            example: 9021000
+                      SupplierName:
+                        type: string
+                        example: XYZ Distribution Services
+                      TelephoneNumber:
+                        type: string
+                        example: +61 2 2000 2000
+                      FaxNumber:
+                        type: string
+                        example: +61 2 2000 2000
+                      EmailAddress:
+                        type: string
+                        example: email@exmaple.com
+                  ProductAvailability:
+                    type: number
+                    example: 10
+                  SupplyDate:
+                    type: object
+                    properties:
+                      SupplyDateRole:
+                        type: number
+                        example: 2
+                      Date:
+                        type: string
+                        format: date
+                        example: 20220501
+                        properties:
+                          dateformat:
+                            type: number
+                            example: '00'
+                            xml:
+                              attribute: true
+                  Stock:
+                    type: object
+                    properties:
+                      OnHand:
+                        type: integer
+                        minimum: 0
+                        example: 25
+                      OnOrder:
+                        type: integer
+                        minimum: 0
+                        example: 44
+                  Price:
+                    type: object
+                    properties:
+                      PriceType:
+                        type: number
+                        example: '02'
+                      PriceAmount:
+                        type: number
+                        example: 22.99
+                      Tax:
+                        type: object
+                        properties:
+                          TaxType:
+                            type: number
+                            example: 1
+                          TaxRateCode:
+                            type: string
+                            example: S
+                          TaxRatePercent:
+                            type: number
+                            example: 15
+                          TaxableAmount:
+                            type: number
+                            example: 19.99
+                          TaxAmount:
+                            type: number
+                            example: 3
+                      CurrencyCode:
+                        type: string
+                        example: AUD
   PublisherSimpleStock:
     description: |-
       Simple stock update to one supplier per country per ISBN-13
