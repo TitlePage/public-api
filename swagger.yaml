@@ -70,7 +70,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Batch updating the stock & availability of maximum 1000 titles for a publisher (Block 6 update)
-      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles per request
+      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles per request. The body could accept ISBN-13 instead of the RecordReference if it's easier.
       operationId: publisherStockBatch
       consumes:
         - application/xml
@@ -478,7 +478,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Publisher batch update of stock & availability for maximum 1000 titles with a single supplier (simple).
-      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request.
+      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request. The body could accept ISBN-13 instead of the RecordReference if it's easier.
       operationId: publsiherSimpleStockBatch
       consumes:
         - application/xml
@@ -779,8 +779,47 @@ definitions:
     xml:
       name: ProductSupply
     properties:
-      ToBoDecided:
+      RecordReference:
+        type: string
+        example: 102-9780415671897
+      Supplier:
         type: object
+        properties:
+          SupplierRole:
+            type: integer
+            example: '02'
+          SupplierName:
+            type: string
+            example: First Book
+      ProductAvailability:
+        type: integer
+        example: 21
+      Stock:
+        type: object
+        properties:
+          OnHand:
+            type: integer
+            example: 20
+          OnOrder:
+            type: integer
+            example: 50
+          CBO:
+            type: integer
+            example: 30
+      Price:
+        type: object
+        properties:
+          PriceAmount:
+            type: number
+            format: float
+            minimum: 0
+            example: 29.95
+          CurrencyCode:
+            type: string
+            example: AUD
+          PriceType:
+            type: integer
+            example: '02'
   PublisherSimpleStockBatch:
     description: |-
       Simple stock update to one supplier per country per ISBN-13
@@ -792,8 +831,47 @@ definitions:
       Product:
         type: object
         properties:
-          ToBoDecided:
+          RecordReference:
+            type: string
+            example: 102-9780415671897
+          Supplier:
             type: object
+            properties:
+              SupplierRole:
+                type: integer
+                example: '02'
+              SupplierName:
+                type: string
+                example: First Book
+          ProductAvailability:
+            type: integer
+            example: 21
+          Stock:
+            type: object
+            properties:
+              OnHand:
+                type: integer
+                example: 20
+              OnOrder:
+                type: integer
+                example: 50
+              CBO:
+                type: integer
+                example: 30
+          Price:
+            type: object
+            properties:
+              PriceAmount:
+                type: number
+                format: float
+                minimum: 0
+                example: 29.95
+              CurrencyCode:
+                type: string
+                example: AUD
+              PriceType:
+                type: integer
+                example: '02'
   TokenRequest:
     type: object
     properties:
