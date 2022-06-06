@@ -478,7 +478,7 @@ paths:
       tags:
         - Non-Bookseller API
       summary: Publisher batch update of stock & availability for maximum 1000 titles with a single supplier (simple).
-      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request. The body could accept ISBN-13 instead of the RecordReference if it's easier.
+      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request. The body could accept ISBN-13 instead of the RecordReference if it's easier. The body could be changed to accept a csv file rather than XML if it's easier.
       operationId: publsiherSimpleStockBatch
       consumes:
         - application/xml
