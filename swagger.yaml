@@ -358,6 +358,12 @@ paths:
           description: The email of the bookstore to accept the token
           type: string
           required: true
+        - name: expiry
+          in: query
+          description: the expiry date of this token, e.g., 2025-07-21
+          type: string
+          format: date
+          required: true
       responses:
         '200':
           description: Token is sent successfully
@@ -384,6 +390,12 @@ paths:
           in: query
           description: The email of the publisher to accept the token
           type: string
+          required: true
+        - name: expiry
+          in: query
+          description: the expiry date of this token, e.g., 2025-07-21
+          type: string
+          format: date
           required: true
       responses:
         '200':
