@@ -353,6 +353,11 @@ paths:
           description: The bookstoreID of the bookstore
           type: string
           required: true
+        - name: name
+          in: query
+          description: The name of the token
+          type: string
+          required: true
         - name: email
           in: query
           description: The email of the bookstore to accept the token
@@ -369,6 +374,8 @@ paths:
           description: Token is sent successfully
         '400':
           description: Invalid Request
+        '404':
+          description: bookstore not found
       security:
         - api_key: []
   /generate-token-publisher/{pubID}:
@@ -384,6 +391,11 @@ paths:
         - name: pubID
           in: path
           description: The pubID of the publisher
+          type: string
+          required: true
+        - name: name
+          in: query
+          description: The name of the token
           type: string
           required: true
         - name: email
@@ -402,6 +414,8 @@ paths:
           description: Token is sent successfully
         '400':
           description: Invalid Request
+        '404':
+          description: publisher not found
       security:
         - api_key: []
   /sale:
