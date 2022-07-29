@@ -173,34 +173,6 @@ paths:
           description: Invalid ISBN-13 supplied
         '404':
           description: ISBN-13 not found
-  /onix-full/{ISBN-13}:
-    get:
-      tags:
-        - Bookstore API
-        - Browser Extension API
-      summary: Returns to FULL ONIX 3.0 file for the ISBN-13
-      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
-      operationId: fullOnix
-      produces:
-        - application/json
-      parameters:
-        - name: ISBN-13
-          in: path
-          description: ISBN-13 of the title to return
-          required: true
-          type: integer
-          format: int64
-          minimum: 9780000000000
-          maximum: 9790000000000
-      responses:
-        '302':
-          description: Redirect to the full ONIX 3.0 file on S3
-        '400':
-          description: Invalid ISBN-13 supplied
-        '404':
-          description: ISBN-13 not found
-      security:
-        - api_key: []
   /stock:
     post:
       tags:
