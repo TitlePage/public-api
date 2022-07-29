@@ -461,7 +461,7 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Invalid Sale
+          description: Invalid Stock
       security:
         - api_key: []
   /publisher/simple-stock/{ISBN-13}:
