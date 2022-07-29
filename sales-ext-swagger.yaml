@@ -1,0 +1,905 @@
+swagger: '2.0'
+info:
+  description: The Australian Publishers Association API
+  version: 1.0.0
+  title: APA API
+  termsOfService: https://www.publishers.asn.au/Web/Terms-and-Conditions.aspx
+  contact:
+    email: support@stsoftware.com.au
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: api.titlepage.com.au
+basePath: /v1
+tags:
+  - name: Public API
+    description: Publically callable ( no authentication ) APIs
+    externalDocs:
+      description: Find out more
+      url: https://titlepage.com.au
+  - name: Bookstore API
+    description: Authorised bookstore APIs
+  - name: Non-Bookseller API
+    description: Authorised publisher APIs
+  - name: APA Administration API
+    description: APA administration API
+  - name: Stage 2
+    description: APIs for Stage 2 implementation
+  - name: Stage 3
+    description: APIs for Stage 3 implementation
+schemes:
+  - https
+paths:
+  /publisher/stock/{ISBN-13}:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
+      description: Product supply details (Block 6 update)
+      operationId: publisherStock
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to be updated.
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+        - in: body
+          name: productSupply
+          description: The ONIX 3.0 Block 6
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherStock'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied ( validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
+  /publisher/stock:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Batch updating the stock & availability of maximum 1000 titles for a publisher (Block 6 update)
+      description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles per request. The body could accept ISBN-13 instead of the RecordReference if it's easier.
+      operationId: publisherStockBatch
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: productSupply
+          description: The ONIX 3.0 Block 6
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherStockBatch'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied ( validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
+  /availability/{ISBN-13}:
+    get:
+      tags:
+        - Public API
+      summary: Find bookstores within the given radius with available stock of the ISBN-13.
+      description: |-
+        Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
+         Browser API to get the current location (requires user permission) https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+          Available stock levels will be returned for "Low Stock" or "In Stock"
+          POS/bookstores opinions are sought on determining "Low Stock" or "In Stock" values.
+      operationId: findISBN
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title check the availability
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+        - name: latitude
+          in: query
+          type: number
+          minimum: -90
+          maximum: 90
+        - name: longitude
+          in: query
+          type: number
+          minimum: -90
+          maximum: 90
+        - name: radius
+          description: The number of kilometers from the client to the book store (as the crow flies)
+          in: query
+          type: integer
+          minimum: 1
+          default: 10
+          maximum: 100
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Location'
+        '400':
+          description: Invalid ISBN-13 supplied
+        '404':
+          description: ISBN-13 not found
+  /onix/{ISBN-13}:
+    get:
+      tags:
+        - Public API
+      summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13 without sensitive stock information
+      description: |-
+        Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy. If there are more than one title matches this ISBN-13, the primiary one will be returned. The logic to find the primary record is:
+        - If there are multiple records, and (only) one is Publishing Availability Status 04 - Active, treat that as the primary record
+        - If there are multiple records, and more than one is Publishing Availability Status 04 - Active, treat the most recently modified/scanned record with Publishing Availability Status 04 - Active as the primary record
+        - If there are multiple records, none with Publishing Availability Status 04 - Active, treat the most recently modified/scanned record with Publishing Availability Status 02 - Forthcoming (if any) as the primary record, 
+        - In all other cases, treat the most recently modified/scanned record as the primary record
+
+      operationId: publicOnix
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to return
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+      responses:
+        '302':
+          description: Redirect to the REDACTED ONIX 3.0 file on S3', example "https://public.onix.s3.aws.com/001/9780000000001.xml.gz"
+        '400':
+          description: Invalid ISBN-13 supplied
+        '404':
+          description: ISBN-13 not found
+  /onix-full/{ISBN-13}:
+    get:
+      tags:
+        - Bookstore API
+      summary: Returns to FULL ONIX 3.0 file for the ISBN-13
+      description: Redirects (status 302) to the full unredacted ONIX 3.0 file stored on S3. The file name is a SHA512 of the file content thus can be cached permanently on the client-side.
+      operationId: fullOnix
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to return
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+      responses:
+        '302':
+          description: Redirect to the full ONIX 3.0 file on S3
+        '400':
+          description: Invalid ISBN-13 supplied
+        '404':
+          description: ISBN-13 not found
+      security:
+        - api_key: []
+  /stock:
+    post:
+      tags:
+        - Bookstore API
+      summary: Update stock levels of a series of ISBN-13.
+      description: The ISBN-13/timestamp will be used to de-duplicate stock levels
+      operationId: batchStock
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Stock data
+          required: true
+          schema:
+            $ref: '#/definitions/Stock'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid Sale
+      security:
+        - api_key: []
+  /publisher/simple-stock/{ISBN-13}:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple).
+      description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required.
+      operationId: publsiherSimpleStock
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - name: ISBN-13
+          in: path
+          description: ISBN-13 of the title to be updated.
+          required: true
+          type: integer
+          format: int64
+          minimum: 9780000000000
+          maximum: 9790000000000
+        - in: body
+          name: productSupply
+          description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherSimpleStock'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied (validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
+  /publisher/simple-stock:
+    put:
+      tags:
+        - Non-Bookseller API
+      summary: Publisher batch update of stock & availability for maximum 1000 titles with a single supplier (simple).
+      description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request. The body could accept ISBN-13 instead of the RecordReference if it's easier. The body could be changed to accept a csv file rather than XML if it's easier.
+      operationId: publsiherSimpleStockBatch
+      consumes:
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: productSupply
+          description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO)
+          required: true
+          schema:
+            $ref: '#/definitions/PublisherSimpleStockBatch'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid stock information supplied (validation issue)
+        '404':
+          description: ISBN-13 not found for this publisher.
+      security:
+        - api_key: []
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  PublisherStock:
+    description: |-
+      Multiple Block 6
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: ProductSupply
+    properties:
+      Market:
+        type: object
+        properties:
+          Territory:
+            type: object
+            properties:
+              CountriesIncluded:
+                type: string
+                example: AU
+      SupplyDetail:
+        type: object
+        properties:
+          Supplier:
+            type: object
+            properties:
+              SupplierRole:
+                type: integer
+                example: '00'
+              SupplierIdentifier:
+                type: object
+                properties:
+                  SupplierIDType:
+                    type: number
+                    example: 7
+                  IDValue:
+                    type: number
+                    example: 9021000
+              SupplierName:
+                type: string
+                example: XYZ Distribution Services
+              TelephoneNumber:
+                type: string
+                example: +61 2 2000 2000
+              FaxNumber:
+                type: string
+                example: +61 2 2000 2000
+              EmailAddress:
+                type: string
+                example: email@exmaple.com
+          ProductAvailability:
+            type: number
+            example: 10
+          SupplyDate:
+            type: object
+            properties:
+              SupplyDateRole:
+                type: number
+                example: 2
+              Date:
+                type: string
+                format: date
+                example: 20220501
+                properties:
+                  dateformat:
+                    type: number
+                    example: '00'
+                    xml:
+                      attribute: true
+          Stock:
+            type: object
+            properties:
+              OnHand:
+                type: integer
+                minimum: 0
+                example: 25
+              OnOrder:
+                type: integer
+                minimum: 0
+                example: 44
+          Price:
+            type: object
+            properties:
+              PriceType:
+                type: number
+                example: '02'
+              PriceAmount:
+                type: number
+                example: 22.99
+              Tax:
+                type: object
+                properties:
+                  TaxType:
+                    type: number
+                    example: 1
+                  TaxRateCode:
+                    type: string
+                    example: S
+                  TaxRatePercent:
+                    type: number
+                    example: 15
+                  TaxableAmount:
+                    type: number
+                    example: 19.99
+                  TaxAmount:
+                    type: number
+                    example: 3
+              CurrencyCode:
+                type: string
+                example: AUD
+  PublisherStockBatch:
+    description: |-
+      Multiple Block 6 for Multiple Title
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: Products
+    properties:
+      Product:
+        type: object
+        properties:
+          RecordReference:
+            type: string
+            example: 102-9780415671897
+          ProductSupply:
+            type: object
+            properties:
+              Market:
+                type: object
+                properties:
+                  Territory:
+                    type: object
+                    properties:
+                      CountriesIncluded:
+                        type: string
+                        example: AU
+              SupplyDetail:
+                type: object
+                properties:
+                  Supplier:
+                    type: object
+                    properties:
+                      SupplierRole:
+                        type: integer
+                        example: '00'
+                      SupplierIdentifier:
+                        type: object
+                        properties:
+                          SupplierIDType:
+                            type: number
+                            example: 7
+                          IDValue:
+                            type: number
+                            example: 9021000
+                      SupplierName:
+                        type: string
+                        example: XYZ Distribution Services
+                      TelephoneNumber:
+                        type: string
+                        example: +61 2 2000 2000
+                      FaxNumber:
+                        type: string
+                        example: +61 2 2000 2000
+                      EmailAddress:
+                        type: string
+                        example: email@exmaple.com
+                  ProductAvailability:
+                    type: number
+                    example: 10
+                  SupplyDate:
+                    type: object
+                    properties:
+                      SupplyDateRole:
+                        type: number
+                        example: 2
+                      Date:
+                        type: string
+                        format: date
+                        example: 20220501
+                        properties:
+                          dateformat:
+                            type: number
+                            example: '00'
+                            xml:
+                              attribute: true
+                  Stock:
+                    type: object
+                    properties:
+                      OnHand:
+                        type: integer
+                        minimum: 0
+                        example: 25
+                      OnOrder:
+                        type: integer
+                        minimum: 0
+                        example: 44
+                  Price:
+                    type: object
+                    properties:
+                      PriceType:
+                        type: number
+                        example: '02'
+                      PriceAmount:
+                        type: number
+                        example: 22.99
+                      Tax:
+                        type: object
+                        properties:
+                          TaxType:
+                            type: number
+                            example: 1
+                          TaxRateCode:
+                            type: string
+                            example: S
+                          TaxRatePercent:
+                            type: number
+                            example: 15
+                          TaxableAmount:
+                            type: number
+                            example: 19.99
+                          TaxAmount:
+                            type: number
+                            example: 3
+                      CurrencyCode:
+                        type: string
+                        example: AUD
+  PublisherSimpleStock:
+    description: |-
+      Simple stock update to one supplier per country per ISBN-13
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: ProductSupply
+    properties:
+      RecordReference:
+        type: string
+        example: 102-9780415671897
+      Supplier:
+        type: object
+        properties:
+          SupplierRole:
+            type: integer
+            example: '02'
+          SupplierName:
+            type: string
+            example: First Book
+      ProductAvailability:
+        type: integer
+        example: 21
+      Stock:
+        type: object
+        properties:
+          OnHand:
+            type: integer
+            example: 20
+          OnOrder:
+            type: integer
+            example: 50
+          CBO:
+            type: integer
+            example: 30
+      Price:
+        type: object
+        properties:
+          PriceAmount:
+            type: number
+            format: float
+            minimum: 0
+            example: 29.95
+          CurrencyCode:
+            type: string
+            example: AUD
+          PriceType:
+            type: integer
+            example: '02'
+  PublisherSimpleStockBatch:
+    description: |-
+      Simple stock update to one supplier per country per ISBN-13
+      TODO Can we rely on a maximum one supplier per country ? then we only need country, onorder, onhand
+    type: string
+    xml:
+      name: Products
+    properties:
+      Product:
+        type: object
+        properties:
+          RecordReference:
+            type: string
+            example: 102-9780415671897
+          Supplier:
+            type: object
+            properties:
+              SupplierRole:
+                type: integer
+                example: '02'
+              SupplierName:
+                type: string
+                example: First Book
+          ProductAvailability:
+            type: integer
+            example: 21
+          Stock:
+            type: object
+            properties:
+              OnHand:
+                type: integer
+                example: 20
+              OnOrder:
+                type: integer
+                example: 50
+              CBO:
+                type: integer
+                example: 30
+          Price:
+            type: object
+            properties:
+              PriceAmount:
+                type: number
+                format: float
+                minimum: 0
+                example: 29.95
+              CurrencyCode:
+                type: string
+                example: AUD
+              PriceType:
+                type: integer
+                example: '02'
+  TokenRequest:
+    type: object
+    properties:
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      email:
+        type: string
+        example: joe@example.com
+      website:
+        type: string
+        example: https://example.com
+      typeBlog:
+        type: boolean
+      typeRetail:
+        type: boolean
+      typePublisherDistributor:
+        type: boolean
+      typeOther:
+        type: boolean
+      requireOnixSimple:
+        type: boolean
+      requireOnixFull:
+        type: boolean
+      requireImage:
+        type: boolean
+      requireWordPress:
+        type: boolean
+      requireShopify:
+        type: boolean
+  CreateBookstoreRequest:
+    type: object
+    properties:
+      userId:
+        type: integer
+        example: 12345
+  CreatePublisherRequest:
+    type: object
+    properties:
+      pubId:
+        type: integer
+        example: 12345
+  UpdateBookstoreRequest:
+    type: object
+    properties:
+      SAN:
+        type: integer
+        example: 29138
+      nationalIDCode:
+        type: string
+        example: AU
+      title:
+        type: string
+        example: Mr
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
+      email:
+        type: string
+        example: joe@example.com
+      companyName:
+        type: string
+        example: Joe's Bookshop
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+      latitude:
+        type: number
+        minimum: -90
+        maximum: 90
+      longitude:
+        type: number
+        minimum: -90
+        maximum: 90
+  UpdatePublisherRequest:
+    type: object
+    properties:
+      nationalIDCode:
+        type: string
+        example: AU
+      title:
+        type: string
+        example: Mr
+      firstName:
+        type: string
+        example: Joe
+      lastName:
+        type: string
+        example: Public
+      jobFunction:
+        type: string
+        example: Purchasing
+      department:
+        type: string
+        example: Purchasing
+      phone:
+        type: string
+        example: 02 2222 3333
+      email:
+        type: string
+        example: joe@example.com
+      companyName:
+        type: string
+        example: Joe's Publisher
+      ABN:
+        type: string
+        example: 981000222333
+      streetAddress:
+        type: string
+        example: 1 Main Street
+      suburb:
+        type: string
+        example: Sydney
+      state:
+        type: string
+        example: NSW
+      postcode:
+        type: integer
+        minimum: 1000
+        maximum: 8000
+        example: 2010
+  Location:
+    description: Location of the bookstore with stock
+    type: array
+    items:
+      type: object
+      properties:
+        bookstore:
+          type: string
+          example: Books Are Us
+        stock:
+          type: string
+          example: In stock
+        address:
+          type: string
+          example: 1 Main Street, Sydney, NSW
+        phone:
+          type: string
+          example: (02) 555 1234
+        website:
+          type: string
+          example: https://books.example.com
+  Sale:
+    description: |-
+      Deduplicate the sales data by use of the timestamp.
+      The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
+          type: integer
+          format: int64
+          example: 9780000000001
+        invoiceId:
+          description: invoice id of this sale
+          type: integer
+          format: int64
+          example: 98337874854
+        timestamp:
+          type: string
+          format: date-time
+          example: '2022-06-25T14:23:10Z'
+          description: timestamp of the sale
+        sold:
+          description: the amount sold of this ISBN-13
+          type: integer
+          format: int64
+          minimum: 0
+          example: 1
+        runningSalesTotal:
+          description: the running sales total of this ISBN-13 on this day
+          type: integer
+          format: int64
+          minimum: 0
+          example: 16
+        averageSellingPrice:
+          description: the average sold price for this ISBN-13
+          type: number
+          format: float
+          minimum: 0
+          example: 19.95
+        CurrencyCode:
+          type: string
+          example: AUD
+  Stock:
+    description: |-
+      Deduplicate the stock data by use of the timestamp.
+      The database key would be ISBN-13, book store, date ( yyyy-MM-dd )
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
+          type: integer
+          format: int64
+          example: 9780000000001
+        timestamp:
+          type: string
+          format: date-time
+          example: '2022-06-25T14:23:10Z'
+          description: |-
+            TODO - Would this be a date now or is it converted to date when we store in Dynomodb ?
+            TODO - This would be a date now ( and where ever called )
+        on-order:
+          description: The on-order number
+          type: integer
+          format: int64
+          minimum: 0
+        in-stock:
+          type: integer
+          format: int64
+          minimum: 0
+        back-order:
+          type: integer
+          format: int64
+          minimum: 0
+        product-url:
+          type: string
+          example: https://www.bookstore.com/product/9780000000001
+  ListPreBuilt:
+    type: array
+    items:
+      type: object
+      properties:
+        NAME:
+          type: string
+          example: Australian-Fishing-Network
+        description:
+          type: string
+          example: Australian Fishing Network - New Release Titles for upcoming 180 days.
+        onixVersion:
+          type: string
+          example: ONIX_3_0
+        lastSheduleRun:
+          type: string
+          format: date-time
+        schedules:
+          type: array
+          items:
+            type: string
+            format: date-time
+        _href:
+          type: string
+          format: uri
+          example: /pre-built/Australian-Fishing-Network
+  SearchResult:
+    type: array
+    items:
+      type: object
+      properties:
+        ISBN-13:
+          type: integer
+          format: int64
+          example: 9780000000001
+        title:
+          type: string
+          example: Happy Holidays.
+        onix-url:
+          type: string
+          description: Broken into sub directories by modulas of the ISBN-13 number.
+          example: https://public.onix.s3.aws.com/001/9780000000001.xml.gz
