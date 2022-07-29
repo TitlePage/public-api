@@ -12,10 +12,6 @@ info:
 host: api.titlepage.com.au
 basePath: /v1
 tags:
-  - name: Browser Extension API
-    description: APIs used for browser extension
-  - name: Stock API
-    description: APIs used for bookstore/publisher stock update
   - name: Public API
     description: Publically callable ( no authentication ) APIs
     externalDocs:
@@ -32,7 +28,6 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-        - Stock API
       summary: Update the stock & availability of an ISBN-13 for a publisher (Block 6 update)
       description: Product supply details (Block 6 update)
       operationId: publisherStock
@@ -68,7 +63,6 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-        - Stock API
       summary: Batch updating the stock & availability of maximum 1000 titles for a publisher (Block 6 update)
       description: Batch updating Product supply details (Block 6 update), accept maximum 1000 titles per request. The body could accept ISBN-13 instead of the RecordReference if it's easier.
       operationId: publisherStockBatch
@@ -96,7 +90,6 @@ paths:
     get:
       tags:
         - Public API
-        - Browser Extension API
       summary: Find bookstores within the given radius with available stock of the ISBN-13.
       description: |-
         Returns a list of bookstores with available stock with the radius, if longitude/latitude is not given then the approximate location of the user's IP address will be used. The results will be ordered by distance from the client. If no bookstores have any stock of the required book an empty (zero length) array will be returned.
@@ -145,7 +138,6 @@ paths:
     get:
       tags:
         - Public API
-        - Browser Extension API
       summary: Redirects to a REDACTED ONIX 3.0 file for the ISBN-13 without sensitive stock information
       description: |-
         Redirects (status 302) to the REDACTED ONIX 3.0 file stored on S3. The file name just a function of the ISBN-13 number so must be refetched to validate that the client has the latest copy. If there are more than one title matches this ISBN-13, the primiary one will be returned. The logic to find the primary record is:
@@ -177,7 +169,6 @@ paths:
     post:
       tags:
         - Bookstore API
-        - Stock API
       summary: Update stock levels of a series of ISBN-13.
       description: The ISBN-13/timestamp will be used to de-duplicate stock levels
       operationId: batchStock
@@ -200,7 +191,6 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-        - Stock API
       summary: Publisher update of stock & availability for an ISBN-13 with a single supplier (simple).
       description: Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required.
       operationId: publsiherSimpleStock
@@ -236,7 +226,6 @@ paths:
     put:
       tags:
         - Non-Bookseller API
-        - Stock API
       summary: Publisher batch update of stock & availability for maximum 1000 titles with a single supplier (simple).
       description: Batch update Product supply simple details, not a full block 6 (including stock OnHand, OnOrder and CBO). Must supply valid Block 6 with minimum information required. Maximum 1000 product per request. The body could accept ISBN-13 instead of the RecordReference if it's easier. The body could be changed to accept a csv file rather than XML if it's easier.
       operationId: publsiherSimpleStockBatch
