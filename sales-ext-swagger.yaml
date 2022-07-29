@@ -15,7 +15,7 @@ tags:
   - name: Browser Extension API
     description: APIs used for browser extension
   - name: Stock API
-    description: APIs used for stock update
+    description: APIs used for bookstore/publisher stock update
   - name: Public API
     description: Publically callable ( no authentication ) APIs
     externalDocs:
